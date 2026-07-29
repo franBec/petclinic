@@ -1,10 +1,8 @@
 # Petclinic
 
-This repository provides the shared persistence layer for the Petclinic domain — a PostgreSQL database managed via [Flyway](https://flywaydb.org/) migrations, Dockerized with supporting tools.
+This repository implements the classic [Spring Petclinic](https://github.com/spring-projects/spring-petclinic) application across multiple tech stacks — all sharing a single PostgreSQL database managed via [Flyway](https://flywaydb.org/) migrations. The client projects are **work in progress**: they have been generated from [bootify.io](https://bootify.io) but are not yet wired to this database and have not been tested.
 
-It is the foundation that sibling application repos (e.g. `petclinic-java`, `petclinic-kotlin`, `petclinic-scala`) are expected to consume as their database backend. Those repos do not exist yet, but the repository layout is designed for them to live alongside this one and connect to `localhost:5432`.
-
-## What's Inside
+## Quick Start
 
 | Service    | Image                         | Port  | Purpose                             |
 |------------|-------------------------------|-------|-------------------------------------|
@@ -14,8 +12,6 @@ It is the foundation that sibling application repos (e.g. `petclinic-java`, `pet
 
 - **Database name:** `petclinic`
 - **Credentials:** `petclinic` / `petclinic`
-
-## Quick Start
 
 ```bash
 docker compose up -d --build
@@ -53,6 +49,28 @@ Flyway also handles seed data. After running migrations, the database is populat
 - **Password:** `admin`
 
 The admin user has `ROLE_OWNER_ADMIN`, `ROLE_VET_ADMIN`, and `ROLE_ADMIN` roles.
+
+## Project Layout
+
+```
+petclinic/
+├── db/flyway/                                    # Flyway Dockerfile, config, and SQL migrations
+├── docs/                                         # Documentation assets (ER diagram, etc.)
+├── .env                                          # Shared environment variables
+├── docker-compose.yml
+├── petclinic-java-gradle-react-tailwind-ts/      # Generated via bootify.io — nothing wired, nothing tested
+├── petclinic-java-gradle-thymeleaf-tailwind-webpack-htmx-ts/  # Generated via bootify.io — nothing wired, nothing tested
+├── petclinic-kt-gradle-thymeleaf-tailwind-webpack-htmx-ts/    # Generated via bootify.io — nothing wired, nothing tested
+└── README.md
+```
+
+| Directory | Language | Frontend |
+|---|---|---|
+| `petclinic-java-gradle-react-tailwind-ts` | Java (Gradle) | React + Tailwind CSS + TypeScript |
+| `petclinic-java-gradle-thymeleaf-tailwind-webpack-htmx-ts` | Java (Gradle) | Thymeleaf + HTMX + Tailwind CSS + TypeScript |
+| `petclinic-kt-gradle-thymeleaf-tailwind-webpack-htmx-ts` | Kotlin (Gradle) | Thymeleaf + HTMX + Tailwind CSS + TypeScript |
+
+All applications connect to the database at `localhost:5432`.
 
 ## Schema Design & Decisions
 
@@ -179,17 +197,3 @@ erDiagram
 | **`ON DELETE SET NULL` on `users.owner_id`** | Deleting an owner record should not delete the user account — just break the link. |
 | **`ON DELETE RESTRICT` on `pets.type_id` and `pets.owner_id`** | Prevents accidental deletion of types or owners that still have associated pets. |
 | **Bcrypt passwords (`VARCHAR(68)`)** | Accommodates bcrypt hashes (60 chars) plus room for future hash algorithm changes. The admin seed uses a bcrypt hash of `admin`. |
-
-
-## Project Layout
-
-```
-petclinic/
-├── db/flyway/       # Flyway Dockerfile, config, and SQL migrations
-├── docs/            # Documentation assets (ER diagram, etc.)
-├── .env             # Shared environment variables
-├── docker-compose.yml
-└── README.md
-```
-
-Sibling repos (`petclinic-java/`, `petclinic-kotlin/`, etc.) are expected to reside at the same directory level as this repo and connect to the database at `localhost:5432`.

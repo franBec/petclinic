@@ -1,0 +1,48 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorate="~{layout}">
+    <head>
+        <title>[[#{type.list.headline}]]</title>
+    </head>
+    <body>
+        <div layout:fragment="content">
+            <div class="flex flex-wrap mb-6">
+                <h1 class="grow text-3xl md:text-4xl font-medium mb-2">[[#{type.list.headline}]]</h1>
+                <div>
+                    <a th:href="@{/types/add}" class="inline-block text-white bg-blue-600 hover:bg-blue-700 focus:ring-blue-300  focus:ring-4 rounded px-5 py-2">[[#{type.list.createNew}]]</a>
+                </div>
+            </div>
+            <div th:if="${types.empty}">[[#{type.list.empty}]]</div>
+            <div th:if="${!types.empty}" class="overflow-x-auto">
+                <table class="w-full">
+                    <thead>
+                        <tr>
+                            <th scope="col" class="text-left p-2">[[#{type.id.label}]]</th>
+                            <th scope="col" class="text-left p-2">[[#{type.createdAt.label}]]</th>
+                            <th scope="col" class="text-left p-2">[[#{type.updatedAt.label}]]</th>
+                            <th scope="col" class="text-left p-2">[[#{type.deletedAt.label}]]</th>
+                            <th><!-- --></th>
+                        </tr>
+                    </thead>
+                    <tbody class="border-t-2 border-black">
+                        <tr th:each="type : ${types}" class="odd:bg-gray-100">
+                            <td class="p-2">[[${type.id}]]</td>
+                            <td class="p-2">[[${type.createdAt}]]</td>
+                            <td class="p-2">[[${type.updatedAt}]]</td>
+                            <td class="p-2">[[${type.deletedAt}]]</td>
+                            <td class="p-2">
+                                <div class="float-right whitespace-nowrap">
+                                    <a th:href="@{/types/edit/{id}(id=${type.id})}" class="inline-block text-white bg-gray-500 hover:bg-gray-600 focus:ring-gray-200 focus:ring-3 rounded px-2.5 py-1.5 text-sm">[[#{type.list.edit}]]</a>
+                                    <form th:action="@{/types/delete/{id}(id=${type.id})}"
+                                            th:hx-confirm="#{delete.confirm}" method="post" class="inline">
+                                        <button type="submit" class="inline-block text-white bg-gray-500 hover:bg-gray-600 focus:ring-gray-200 focus:ring-3 rounded px-2.5 py-1.5 text-sm cursor-pointer">[[#{type.list.delete}]]</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </body>
+</html>
