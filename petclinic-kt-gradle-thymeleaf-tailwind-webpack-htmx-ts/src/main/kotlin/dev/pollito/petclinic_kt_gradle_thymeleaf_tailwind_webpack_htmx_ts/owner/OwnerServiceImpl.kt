@@ -10,12 +10,11 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
 
-
 @Service
 class OwnerServiceImpl(
     private val ownerRepository: OwnerRepository,
     private val publisher: ApplicationEventPublisher,
-    private val ownerMapper: OwnerMapper
+    private val ownerMapper: OwnerMapper,
 ) : OwnerService {
 
     override fun findAll(filter: String?, pageable: Pageable): Page<OwnerDTO> {
@@ -25,14 +24,17 @@ class OwnerServiceImpl(
         } else {
             page = ownerRepository.findAll(pageable)
         }
-        return PageImpl(page.content
+        return PageImpl(
+            page.content
                 .map { owner -> ownerMapper.updateOwnerDTO(owner, OwnerDTO()) },
-                pageable, page.totalElements)
+            pageable,
+            page.totalElements,
+        )
     }
 
     override fun `get`(id: Int): OwnerDTO = ownerRepository.findById(id)
-            .map { owner -> ownerMapper.updateOwnerDTO(owner, OwnerDTO()) }
-            .orElseThrow { NotFoundException() }
+        .map { owner -> ownerMapper.updateOwnerDTO(owner, OwnerDTO()) }
+        .orElseThrow { NotFoundException() }
 
     override fun create(ownerDTO: OwnerDTO): Int {
         val owner = Owner()
@@ -42,20 +44,19 @@ class OwnerServiceImpl(
 
     override fun update(id: Int, ownerDTO: OwnerDTO) {
         val owner = ownerRepository.findById(id)
-                .orElseThrow { NotFoundException() }
+            .orElseThrow { NotFoundException() }
         ownerMapper.updateOwner(ownerDTO, owner)
         ownerRepository.save(owner)
     }
 
     override fun delete(id: Int) {
         val owner = ownerRepository.findById(id)
-                .orElseThrow { NotFoundException() }
+            .orElseThrow { NotFoundException() }
         publisher.publishEvent(BeforeDeleteOwner(id))
         ownerRepository.delete(owner)
     }
 
     override fun getOwnerValues(): Map<Int, Int> = ownerRepository.findAll(Sort.by("id"))
-            .stream()
-            .collect(CustomCollectors.toSortedMap(Owner::id, Owner::id))
-
+        .stream()
+        .collect(CustomCollectors.toSortedMap(Owner::id, Owner::id))
 }

@@ -9,7 +9,6 @@ import org.springframework.context.event.EventListener;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-
 @Service
 public class VisitServiceImpl implements VisitService {
 

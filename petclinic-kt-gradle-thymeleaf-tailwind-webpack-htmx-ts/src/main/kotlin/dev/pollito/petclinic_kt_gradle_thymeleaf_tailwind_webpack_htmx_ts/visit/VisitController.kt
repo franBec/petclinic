@@ -13,12 +13,11 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.servlet.mvc.support.RedirectAttributes
 
-
 @Controller
 @RequestMapping("/visits")
 class VisitController(
     private val visitService: VisitService,
-    private val petService: PetService
+    private val petService: PetService,
 ) {
 
     @ModelAttribute
@@ -39,14 +38,16 @@ class VisitController(
     fun add(
         @ModelAttribute("visit") @Valid visitDTO: VisitDTO,
         bindingResult: BindingResult,
-        redirectAttributes: RedirectAttributes
+        redirectAttributes: RedirectAttributes,
     ): String {
         if (bindingResult.hasErrors()) {
             return "visit/add"
         }
         visitService.create(visitDTO)
-        redirectAttributes.addFlashAttribute(WebUtils.MSG_SUCCESS,
-                WebUtils.getMessage("visit.create.success"))
+        redirectAttributes.addFlashAttribute(
+            WebUtils.MSG_SUCCESS,
+            WebUtils.getMessage("visit.create.success"),
+        )
         return "redirect:/visits"
     }
 
@@ -61,23 +62,26 @@ class VisitController(
         @PathVariable(name = "id") id: Int,
         @ModelAttribute("visit") @Valid visitDTO: VisitDTO,
         bindingResult: BindingResult,
-        redirectAttributes: RedirectAttributes
+        redirectAttributes: RedirectAttributes,
     ): String {
         if (bindingResult.hasErrors()) {
             return "visit/edit"
         }
         visitService.update(id, visitDTO)
-        redirectAttributes.addFlashAttribute(WebUtils.MSG_SUCCESS,
-                WebUtils.getMessage("visit.update.success"))
+        redirectAttributes.addFlashAttribute(
+            WebUtils.MSG_SUCCESS,
+            WebUtils.getMessage("visit.update.success"),
+        )
         return "redirect:/visits"
     }
 
     @PostMapping("/delete/{id}")
     fun delete(@PathVariable(name = "id") id: Int, redirectAttributes: RedirectAttributes): String {
         visitService.delete(id)
-        redirectAttributes.addFlashAttribute(WebUtils.MSG_INFO,
-                WebUtils.getMessage("visit.delete.success"))
+        redirectAttributes.addFlashAttribute(
+            WebUtils.MSG_INFO,
+            WebUtils.getMessage("visit.delete.success"),
+        )
         return "redirect:/visits"
     }
-
 }

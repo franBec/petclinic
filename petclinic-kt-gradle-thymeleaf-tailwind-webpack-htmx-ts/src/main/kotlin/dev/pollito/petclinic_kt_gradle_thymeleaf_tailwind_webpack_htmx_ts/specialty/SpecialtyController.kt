@@ -12,11 +12,10 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.servlet.mvc.support.RedirectAttributes
 
-
 @Controller
 @RequestMapping("/specialties")
 class SpecialtyController(
-    private val specialtyService: SpecialtyService
+    private val specialtyService: SpecialtyService,
 ) {
 
     @GetMapping
@@ -32,14 +31,16 @@ class SpecialtyController(
     fun add(
         @ModelAttribute("specialty") @Valid specialtyDTO: SpecialtyDTO,
         bindingResult: BindingResult,
-        redirectAttributes: RedirectAttributes
+        redirectAttributes: RedirectAttributes,
     ): String {
         if (bindingResult.hasErrors()) {
             return "specialty/add"
         }
         specialtyService.create(specialtyDTO)
-        redirectAttributes.addFlashAttribute(WebUtils.MSG_SUCCESS,
-                WebUtils.getMessage("specialty.create.success"))
+        redirectAttributes.addFlashAttribute(
+            WebUtils.MSG_SUCCESS,
+            WebUtils.getMessage("specialty.create.success"),
+        )
         return "redirect:/specialties"
     }
 
@@ -54,23 +55,26 @@ class SpecialtyController(
         @PathVariable(name = "id") id: Int,
         @ModelAttribute("specialty") @Valid specialtyDTO: SpecialtyDTO,
         bindingResult: BindingResult,
-        redirectAttributes: RedirectAttributes
+        redirectAttributes: RedirectAttributes,
     ): String {
         if (bindingResult.hasErrors()) {
             return "specialty/edit"
         }
         specialtyService.update(id, specialtyDTO)
-        redirectAttributes.addFlashAttribute(WebUtils.MSG_SUCCESS,
-                WebUtils.getMessage("specialty.update.success"))
+        redirectAttributes.addFlashAttribute(
+            WebUtils.MSG_SUCCESS,
+            WebUtils.getMessage("specialty.update.success"),
+        )
         return "redirect:/specialties"
     }
 
     @PostMapping("/delete/{id}")
     fun delete(@PathVariable(name = "id") id: Int, redirectAttributes: RedirectAttributes): String {
         specialtyService.delete(id)
-        redirectAttributes.addFlashAttribute(WebUtils.MSG_INFO,
-                WebUtils.getMessage("specialty.delete.success"))
+        redirectAttributes.addFlashAttribute(
+            WebUtils.MSG_INFO,
+            WebUtils.getMessage("specialty.delete.success"),
+        )
         return "redirect:/specialties"
     }
-
 }

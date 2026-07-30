@@ -10,9 +10,7 @@ import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
-import jakarta.persistence.SequenceGenerator
 import jakarta.persistence.Table
-
 
 @Entity
 @Table(name = "user_roles")
@@ -21,7 +19,7 @@ class UserRole {
     @Id
     @Column(
         nullable = false,
-        updatable = false
+        updatable = false,
     )
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Int? = null
@@ -29,15 +27,14 @@ class UserRole {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
         name = "username",
-        nullable = false
+        nullable = false,
     )
     var username: User? = null
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
         name = "role_id",
-        nullable = false
+        nullable = false,
     )
     var role: Role? = null
-
 }

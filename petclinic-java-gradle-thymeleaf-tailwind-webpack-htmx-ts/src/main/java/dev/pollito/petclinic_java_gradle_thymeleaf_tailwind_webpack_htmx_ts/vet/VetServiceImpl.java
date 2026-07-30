@@ -10,7 +10,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-
 @Service
 @Transactional(rollbackFor = Exception.class)
 public class VetServiceImpl implements VetService {
@@ -79,8 +78,8 @@ public class VetServiceImpl implements VetService {
     @EventListener(BeforeDeleteSpecialty.class)
     public void on(final BeforeDeleteSpecialty event) {
         // remove many-to-many relations at owning side
-        vetRepository.findAllByVetSpecialtySpecialtiesId(event.getId()).forEach(vet ->
-                vet.getVetSpecialtySpecialties().removeIf(specialty -> specialty.getId().equals(event.getId())));
+        vetRepository.findAllByVetSpecialtySpecialtiesId(event.getId()).forEach(
+                vet -> vet.getVetSpecialtySpecialties().removeIf(specialty -> specialty.getId().equals(event.getId())));
     }
 
 }

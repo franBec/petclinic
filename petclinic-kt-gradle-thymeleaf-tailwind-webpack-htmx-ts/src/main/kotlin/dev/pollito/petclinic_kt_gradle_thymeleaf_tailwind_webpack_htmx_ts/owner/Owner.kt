@@ -8,10 +8,8 @@ import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.OneToMany
-import jakarta.persistence.SequenceGenerator
 import jakarta.persistence.Table
 import java.time.OffsetDateTime
-
 
 @Entity
 @Table(name = "owners")
@@ -20,44 +18,44 @@ class Owner {
     @Id
     @Column(
         nullable = false,
-        updatable = false
+        updatable = false,
     )
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Int? = null
 
     @Column(
         nullable = false,
-        columnDefinition = "text"
+        columnDefinition = "text",
     )
     var firstName: String? = null
 
     @Column(
         nullable = false,
-        columnDefinition = "text"
+        columnDefinition = "text",
     )
     var lastName: String? = null
 
     @Column(
         nullable = false,
-        columnDefinition = "text"
+        columnDefinition = "text",
     )
     var address: String? = null
 
     @Column(
         nullable = false,
-        columnDefinition = "text"
+        columnDefinition = "text",
     )
     var city: String? = null
 
     @Column(
         nullable = false,
-        columnDefinition = "text"
+        columnDefinition = "text",
     )
     var telephone: String? = null
 
     @Column(
         nullable = false,
-        columnDefinition = "text"
+        columnDefinition = "text",
     )
     var email: String? = null
 
@@ -75,5 +73,4 @@ class Owner {
 
     @OneToMany(mappedBy = "owner")
     var ownerUsers = mutableSetOf<User>()
-
 }

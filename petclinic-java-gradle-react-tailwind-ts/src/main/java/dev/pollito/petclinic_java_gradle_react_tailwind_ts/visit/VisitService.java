@@ -2,7 +2,6 @@ package dev.pollito.petclinic_java_gradle_react_tailwind_ts.visit;
 
 import java.util.List;
 
-
 public interface VisitService {
 
     List<VisitDTO> findAll();

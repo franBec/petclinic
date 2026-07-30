@@ -13,11 +13,7 @@ import org.mapstruct.MappingConstants;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.ReportingPolicy;
 
-
-@Mapper(
-        componentModel = MappingConstants.ComponentModel.SPRING,
-        unmappedTargetPolicy = ReportingPolicy.IGNORE
-)
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING, unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface VetMapper {
 
     @Mapping(target = "vetSpecialtySpecialties", ignore = true)
@@ -40,7 +36,8 @@ public interface VetMapper {
             @Context SpecialtyRepository specialtyRepository) {
         final List<Specialty> vetSpecialtySpecialties = specialtyRepository.findAllById(
                 vetDTO.getVetSpecialtySpecialties() == null ? List.of() : vetDTO.getVetSpecialtySpecialties());
-        if (vetSpecialtySpecialties.size() != (vetDTO.getVetSpecialtySpecialties() == null ? 0 : vetDTO.getVetSpecialtySpecialties().size())) {
+        if (vetSpecialtySpecialties.size() != (vetDTO.getVetSpecialtySpecialties() == null ? 0
+                : vetDTO.getVetSpecialtySpecialties().size())) {
             throw new NotFoundException("one of vetSpecialtySpecialties not found");
         }
         vet.setVetSpecialtySpecialties(new HashSet<>(vetSpecialtySpecialties));

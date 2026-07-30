@@ -15,13 +15,12 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.servlet.mvc.support.RedirectAttributes
 
-
 @Controller
 @RequestMapping("/pets")
 class PetController(
     private val petService: PetService,
     private val typeService: TypeService,
-    private val ownerService: OwnerService
+    private val ownerService: OwnerService,
 ) {
 
     @ModelAttribute
@@ -43,14 +42,16 @@ class PetController(
     fun add(
         @ModelAttribute("pet") @Valid petDTO: PetDTO,
         bindingResult: BindingResult,
-        redirectAttributes: RedirectAttributes
+        redirectAttributes: RedirectAttributes,
     ): String {
         if (bindingResult.hasErrors()) {
             return "pet/add"
         }
         petService.create(petDTO)
-        redirectAttributes.addFlashAttribute(WebUtils.MSG_SUCCESS,
-                WebUtils.getMessage("pet.create.success"))
+        redirectAttributes.addFlashAttribute(
+            WebUtils.MSG_SUCCESS,
+            WebUtils.getMessage("pet.create.success"),
+        )
         return "redirect:/pets"
     }
 
@@ -65,14 +66,16 @@ class PetController(
         @PathVariable(name = "id") id: Int,
         @ModelAttribute("pet") @Valid petDTO: PetDTO,
         bindingResult: BindingResult,
-        redirectAttributes: RedirectAttributes
+        redirectAttributes: RedirectAttributes,
     ): String {
         if (bindingResult.hasErrors()) {
             return "pet/edit"
         }
         petService.update(id, petDTO)
-        redirectAttributes.addFlashAttribute(WebUtils.MSG_SUCCESS,
-                WebUtils.getMessage("pet.update.success"))
+        redirectAttributes.addFlashAttribute(
+            WebUtils.MSG_SUCCESS,
+            WebUtils.getMessage("pet.update.success"),
+        )
         return "redirect:/pets"
     }
 
@@ -80,14 +83,19 @@ class PetController(
     fun delete(@PathVariable(name = "id") id: Int, redirectAttributes: RedirectAttributes): String {
         try {
             petService.delete(id)
-            redirectAttributes.addFlashAttribute(WebUtils.MSG_INFO,
-                    WebUtils.getMessage("pet.delete.success"))
+            redirectAttributes.addFlashAttribute(
+                WebUtils.MSG_INFO,
+                WebUtils.getMessage("pet.delete.success"),
+            )
         } catch (referencedException: ReferencedException) {
-            redirectAttributes.addFlashAttribute(WebUtils.MSG_ERROR,
-                    WebUtils.getMessage(referencedException.key!!,
-                    *referencedException.params.toTypedArray()))
+            redirectAttributes.addFlashAttribute(
+                WebUtils.MSG_ERROR,
+                WebUtils.getMessage(
+                    referencedException.key!!,
+                    *referencedException.params.toTypedArray(),
+                ),
+            )
         }
         return "redirect:/pets"
     }
-
 }

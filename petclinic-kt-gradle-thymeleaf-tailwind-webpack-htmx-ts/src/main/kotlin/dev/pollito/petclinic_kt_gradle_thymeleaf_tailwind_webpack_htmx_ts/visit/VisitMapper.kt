@@ -10,16 +10,15 @@ import org.mapstruct.MappingConstants
 import org.mapstruct.MappingTarget
 import org.mapstruct.ReportingPolicy
 
-
 @Mapper(
     componentModel = MappingConstants.ComponentModel.SPRING,
-    unmappedTargetPolicy = ReportingPolicy.IGNORE
+    unmappedTargetPolicy = ReportingPolicy.IGNORE,
 )
 interface VisitMapper {
 
     @Mapping(
         target = "pet",
-        ignore = true
+        ignore = true,
     )
     fun updateVisitDTO(visit: Visit, @MappingTarget visitDTO: VisitDTO): VisitDTO
 
@@ -30,27 +29,30 @@ interface VisitMapper {
 
     @Mapping(
         target = "id",
-        ignore = true
+        ignore = true,
     )
     @Mapping(
         target = "pet",
-        ignore = true
+        ignore = true,
     )
     fun updateVisit(
         visitDTO: VisitDTO,
         @MappingTarget visit: Visit,
-        @Context petRepository: PetRepository
+        @Context petRepository: PetRepository,
     ): Visit
 
     @AfterMapping
     fun afterUpdateVisit(
         visitDTO: VisitDTO,
         @MappingTarget visit: Visit,
-        @Context petRepository: PetRepository
+        @Context petRepository: PetRepository,
     ) {
-        val pet = if (visitDTO.pet == null) null else petRepository.findById(visitDTO.pet!!)
+        val pet = if (visitDTO.pet == null) {
+            null
+        } else {
+            petRepository.findById(visitDTO.pet!!)
                 .orElseThrow { NotFoundException("pet not found") }
+        }
         visit.pet = pet
     }
-
 }

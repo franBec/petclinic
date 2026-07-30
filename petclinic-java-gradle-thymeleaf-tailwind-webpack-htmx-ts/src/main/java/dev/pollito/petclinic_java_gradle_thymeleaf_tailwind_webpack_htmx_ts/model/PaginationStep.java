@@ -3,7 +3,6 @@ package dev.pollito.petclinic_java_gradle_thymeleaf_tailwind_webpack_htmx_ts.mod
 import lombok.Getter;
 import lombok.Setter;
 
-
 @Getter
 @Setter
 public class PaginationStep {

@@ -11,12 +11,11 @@ import InputRow from 'app/common/input-row/input-row';
 import useDocumentTitle from 'app/common/use-document-title';
 import * as yup from 'yup';
 
-
 function getSchema() {
   setYupDefaults();
   return yup.object({
     username: yup.string().emptyToNull().max(20).required(),
-    password: yup.string().emptyToNull().max(72).required()
+    password: yup.string().emptyToNull().max(72).required(),
   });
 }
 
@@ -40,22 +39,41 @@ export default function Authentication() {
       if (error.status === 401) {
         useFormResult.reset();
         navigate('/login', {
-              state: {
-                msgError: t('authentication.login.error')
-              }
-            });
+          state: {
+            msgError: t('authentication.login.error'),
+          },
+        });
         return;
       }
       handleServerError(error, navigate, useFormResult.setError, t);
     }
   };
 
-  return (<>
-    <h1 className="grow text-3xl md:text-4xl font-medium mb-8">{t('authentication.login.headline')}</h1>
-    <form onSubmit={useFormResult.handleSubmit(login)} noValidate>
-      <InputRow useFormResult={useFormResult} object="authentication" field="username" required={true} />
-      <InputRow useFormResult={useFormResult} object="authentication" field="password" required={true} type="password" />
-      <input type="submit" value={t('authentication.login.headline')} className="inline-block text-white bg-blue-600 hover:bg-blue-700 focus:ring-blue-300  focus:ring-4 rounded px-5 py-2 cursor-pointer mt-6" />
-    </form>
-  </>);
+  return (
+    <>
+      <h1 className="grow text-3xl md:text-4xl font-medium mb-8">
+        {t('authentication.login.headline')}
+      </h1>
+      <form onSubmit={useFormResult.handleSubmit(login)} noValidate>
+        <InputRow
+          useFormResult={useFormResult}
+          object="authentication"
+          field="username"
+          required={true}
+        />
+        <InputRow
+          useFormResult={useFormResult}
+          object="authentication"
+          field="password"
+          required={true}
+          type="password"
+        />
+        <input
+          type="submit"
+          value={t('authentication.login.headline')}
+          className="inline-block text-white bg-blue-600 hover:bg-blue-700 focus:ring-blue-300  focus:ring-4 rounded px-5 py-2 cursor-pointer mt-6"
+        />
+      </form>
+    </>
+  );
 }

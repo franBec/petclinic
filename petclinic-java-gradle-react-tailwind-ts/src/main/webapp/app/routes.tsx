@@ -1,10 +1,9 @@
 import React from 'react';
 import { createBrowserRouter, RouterProvider } from 'react-router';
-import App from "./app";
+import App from './app';
 import Home from './home/home';
 import Authentication from './security/authentication';
 import Error from './error/error';
-
 
 export default function AppRoutes() {
   const router = createBrowserRouter([
@@ -14,12 +13,10 @@ export default function AppRoutes() {
         { path: '', element: <Home /> },
         { path: 'login', element: <Authentication /> },
         { path: 'error', element: <Error /> },
-        { path: '*', element: <Error /> }
-      ]
-    }
+        { path: '*', element: <Error /> },
+      ],
+    },
   ]);
 
-  return (
-    <RouterProvider router={router} />
-  );
+  return <RouterProvider router={router} />;
 }

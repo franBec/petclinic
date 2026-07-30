@@ -7,10 +7,8 @@ import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.ManyToMany
-import jakarta.persistence.SequenceGenerator
 import jakarta.persistence.Table
 import java.time.OffsetDateTime
-
 
 @Entity
 @Table(name = "specialties")
@@ -19,14 +17,14 @@ class Specialty {
     @Id
     @Column(
         nullable = false,
-        updatable = false
+        updatable = false,
     )
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Int? = null
 
     @Column(
         nullable = false,
-        columnDefinition = "text"
+        columnDefinition = "text",
     )
     var name: String? = null
 
@@ -41,5 +39,4 @@ class Specialty {
 
     @ManyToMany(mappedBy = "vetSpecialtySpecialties")
     var vetSpecialtyVets = mutableSetOf<Vet>()
-
 }

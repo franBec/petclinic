@@ -15,7 +15,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 
-
 @Configuration
 @EnableMethodSecurity(prePostEnabled = true)
 public class AdminSecurityConfig {
@@ -39,17 +38,17 @@ public class AdminSecurityConfig {
                 .csrf(csrf -> csrf.ignoringRequestMatchers("/actuator/**"))
                 .authorizeHttpRequests(authorize -> authorize.anyRequest().permitAll())
                 .formLogin(form -> form
-                    .loginPage("/login")
-                    .failureUrl("/login?loginError=true"))
+                        .loginPage("/login")
+                        .failureUrl("/login?loginError=true"))
                 .rememberMe(rememberMe -> rememberMe
-                    .tokenValiditySeconds(((int)Duration.ofDays(180).getSeconds()))
-                    .rememberMeParameter("rememberMe")
-                    .key(rememberMeKey))
+                        .tokenValiditySeconds(((int) Duration.ofDays(180).getSeconds()))
+                        .rememberMeParameter("rememberMe")
+                        .key(rememberMeKey))
                 .logout(logout -> logout
-                    .logoutSuccessUrl("/?logoutSuccess=true")
-                    .deleteCookies("JSESSIONID"))
+                        .logoutSuccessUrl("/?logoutSuccess=true")
+                        .deleteCookies("JSESSIONID"))
                 .exceptionHandling(exception -> exception
-                    .authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/login?loginRequired=true")))
+                        .authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/login?loginRequired=true")))
                 .build();
     }
 

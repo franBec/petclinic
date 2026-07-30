@@ -1,9 +1,8 @@
 package dev.pollito.petclinic_kt_gradle_thymeleaf_tailwind_webpack_htmx_ts.type
 
 import jakarta.validation.constraints.NotNull
-import java.time.OffsetDateTime
 import org.springframework.format.annotation.DateTimeFormat
-
+import java.time.OffsetDateTime
 
 class TypeDTO {
 
@@ -22,5 +21,4 @@ class TypeDTO {
 
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ssXXX")
     var deletedAt: OffsetDateTime? = null
-
 }

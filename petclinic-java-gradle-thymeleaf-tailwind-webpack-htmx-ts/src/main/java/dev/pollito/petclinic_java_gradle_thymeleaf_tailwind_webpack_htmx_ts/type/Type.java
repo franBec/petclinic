@@ -15,7 +15,6 @@ import java.util.Set;
 import lombok.Getter;
 import lombok.Setter;
 
-
 @Entity
 @Table(name = "types")
 @Getter
@@ -24,9 +23,7 @@ public class Type {
 
     @Id
     @Column(nullable = false, updatable = false)
-    @GeneratedValue(
-            strategy = GenerationType.IDENTITY
-    )
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @Column(nullable = false, columnDefinition = "text")

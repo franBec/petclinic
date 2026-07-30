@@ -12,7 +12,6 @@ import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
 import java.time.OffsetDateTime
 
-
 @Entity
 @Table(name = "users")
 class User {
@@ -21,13 +20,13 @@ class User {
     @Column(
         nullable = false,
         updatable = false,
-        length = 20
+        length = 20,
     )
     var username: String? = null
 
     @Column(
         nullable = false,
-        length = 68
+        length = 68,
     )
     var password: String? = null
 
@@ -46,5 +45,4 @@ class User {
 
     @OneToMany(mappedBy = "username")
     var usernameUserRoles = mutableSetOf<UserRole>()
-
 }

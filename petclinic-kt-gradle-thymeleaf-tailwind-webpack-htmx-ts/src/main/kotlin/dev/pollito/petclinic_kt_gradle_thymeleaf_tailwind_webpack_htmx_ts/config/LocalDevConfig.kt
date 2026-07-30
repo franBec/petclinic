@@ -6,14 +6,13 @@ import org.springframework.core.io.ClassPathResource
 import org.thymeleaf.TemplateEngine
 import org.thymeleaf.templateresolver.FileTemplateResolver
 
-
 /**
  * Load Thymeleaf files from the file system during development, without any caching.
  */
 @Configuration
 @Profile("local")
 class LocalDevConfig(
-    templateEngine: TemplateEngine
+    templateEngine: TemplateEngine,
 ) {
 
     init {
@@ -32,5 +31,4 @@ class LocalDevConfig(
             templateEngine.setTemplateResolver(fileTemplateResolver)
         }
     }
-
 }

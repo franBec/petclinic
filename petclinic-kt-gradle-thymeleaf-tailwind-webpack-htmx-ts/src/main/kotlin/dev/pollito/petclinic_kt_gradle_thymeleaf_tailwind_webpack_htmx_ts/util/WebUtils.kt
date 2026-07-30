@@ -3,20 +3,19 @@ package dev.pollito.petclinic_kt_gradle_thymeleaf_tailwind_webpack_htmx_ts.util
 import dev.pollito.petclinic_kt_gradle_thymeleaf_tailwind_webpack_htmx_ts.model.PaginationModel
 import dev.pollito.petclinic_kt_gradle_thymeleaf_tailwind_webpack_htmx_ts.model.PaginationStep
 import jakarta.servlet.http.HttpServletRequest
-import java.lang.Math
-import java.util.ArrayList
 import org.springframework.context.MessageSource
 import org.springframework.data.domain.Page
 import org.springframework.stereotype.Component
 import org.springframework.web.context.request.RequestContextHolder
 import org.springframework.web.context.request.ServletRequestAttributes
 import org.springframework.web.servlet.LocaleResolver
-
+import java.lang.Math
+import java.util.ArrayList
 
 @Component
 class WebUtils(
     messageSource: MessageSource,
-    localeResolver: LocaleResolver
+    localeResolver: LocaleResolver,
 ) {
 
     init {
@@ -37,16 +36,22 @@ class WebUtils(
         lateinit var localeResolver: LocaleResolver
 
         @JvmStatic
-        fun getRequest(): HttpServletRequest = (RequestContextHolder.getRequestAttributes() as
-                ServletRequestAttributes).request
+        fun getRequest(): HttpServletRequest = (
+            RequestContextHolder.getRequestAttributes() as
+                ServletRequestAttributes
+            ).request
 
         @JvmStatic
-        fun getMessage(code: String, vararg args: Any): String? = messageSource.getMessage(code,
-                args, code, localeResolver.resolveLocale(getRequest()))
+        fun getMessage(code: String, vararg args: Any): String? = messageSource.getMessage(
+            code,
+            args,
+            code,
+            localeResolver.resolveLocale(getRequest()),
+        )
 
         @JvmStatic
         private fun getStepUrl(page: Page<*>, targetPage: Int): String {
-            var stepUrl = "?page=${targetPage}&size=${page.size}"
+            var stepUrl = "?page=$targetPage&size=${page.size}"
             if (getRequest().getParameter("sort") != null) {
                 stepUrl += "&sort=" + getRequest().getParameter("sort")
             }
@@ -86,14 +91,15 @@ class WebUtils(
 
             val rangeStart = page.number * page.size + 1L
             val rangeEnd = Math.min(rangeStart + page.size - 1, page.totalElements)
-            val range = if (rangeStart == rangeEnd) "" + rangeStart else
-                    "${rangeStart} - ${rangeEnd}"
+            val range = if (rangeStart == rangeEnd) {
+                "" + rangeStart
+            } else {
+                "$rangeStart - $rangeEnd"
+            }
             val paginationModel = PaginationModel()
             paginationModel.steps = steps
             paginationModel.elements = getMessage("pagination.elements", range, page.totalElements)
             return paginationModel
         }
-
     }
-
 }

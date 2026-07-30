@@ -8,12 +8,11 @@ import org.springframework.context.event.EventListener
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
 
-
 @Service
 class VisitServiceImpl(
     private val visitRepository: VisitRepository,
     private val petRepository: PetRepository,
-    private val visitMapper: VisitMapper
+    private val visitMapper: VisitMapper,
 ) : VisitService {
 
     override fun findAll(): List<VisitDTO> {
@@ -22,8 +21,8 @@ class VisitServiceImpl(
     }
 
     override fun `get`(id: Int): VisitDTO = visitRepository.findById(id)
-            .map { visit -> visitMapper.updateVisitDTO(visit, VisitDTO()) }
-            .orElseThrow { NotFoundException() }
+        .map { visit -> visitMapper.updateVisitDTO(visit, VisitDTO()) }
+        .orElseThrow { NotFoundException() }
 
     override fun create(visitDTO: VisitDTO): Int {
         val visit = Visit()
@@ -33,14 +32,14 @@ class VisitServiceImpl(
 
     override fun update(id: Int, visitDTO: VisitDTO) {
         val visit = visitRepository.findById(id)
-                .orElseThrow { NotFoundException() }
+            .orElseThrow { NotFoundException() }
         visitMapper.updateVisit(visitDTO, visit, petRepository)
         visitRepository.save(visit)
     }
 
     override fun delete(id: Int) {
         val visit = visitRepository.findById(id)
-                .orElseThrow { NotFoundException() }
+            .orElseThrow { NotFoundException() }
         visitRepository.delete(visit)
     }
 
@@ -54,5 +53,4 @@ class VisitServiceImpl(
             throw referencedException
         }
     }
-
 }

@@ -1,10 +1,9 @@
 package dev.pollito.petclinic_kt_gradle_thymeleaf_tailwind_webpack_htmx_ts.pet
 
 import jakarta.validation.constraints.NotNull
+import org.springframework.format.annotation.DateTimeFormat
 import java.time.LocalDate
 import java.time.OffsetDateTime
-import org.springframework.format.annotation.DateTimeFormat
-
 
 class PetDTO {
 
@@ -32,5 +31,4 @@ class PetDTO {
 
     @NotNull
     var owner: Int? = null
-
 }

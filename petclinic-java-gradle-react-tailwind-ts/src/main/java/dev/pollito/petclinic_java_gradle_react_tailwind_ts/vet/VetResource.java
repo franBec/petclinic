@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-
 @RestController
 @RequestMapping(value = "/api/vets", produces = MediaType.APPLICATION_JSON_VALUE)
 public class VetResource {
@@ -34,25 +33,11 @@ public class VetResource {
         this.vetService = vetService;
     }
 
-    @Operation(
-            parameters = {
-                    @Parameter(
-                            name = "page",
-                            in = ParameterIn.QUERY,
-                            schema = @Schema(implementation = Integer.class)
-                    ),
-                    @Parameter(
-                            name = "size",
-                            in = ParameterIn.QUERY,
-                            schema = @Schema(implementation = Integer.class)
-                    ),
-                    @Parameter(
-                            name = "sort",
-                            in = ParameterIn.QUERY,
-                            schema = @Schema(implementation = String.class)
-                    )
-            }
-    )
+    @Operation(parameters = {
+            @Parameter(name = "page", in = ParameterIn.QUERY, schema = @Schema(implementation = Integer.class)),
+            @Parameter(name = "size", in = ParameterIn.QUERY, schema = @Schema(implementation = Integer.class)),
+            @Parameter(name = "sort", in = ParameterIn.QUERY, schema = @Schema(implementation = String.class))
+    })
     @GetMapping
     public ResponseEntity<Page<VetDTO>> getAllVets(
             @RequestParam(name = "filter", required = false) final String filter,

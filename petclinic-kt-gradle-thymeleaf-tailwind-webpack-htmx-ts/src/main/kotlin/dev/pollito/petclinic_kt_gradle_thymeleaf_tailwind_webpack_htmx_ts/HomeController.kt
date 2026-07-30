@@ -6,18 +6,20 @@ import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestParam
 
-
 @Controller
 class HomeController {
 
     @GetMapping("/")
-    fun index(@RequestParam(name = "logoutSuccess", defaultValue = "false") logoutSuccess: Boolean,
-            model: Model): String {
+    fun index(
+        @RequestParam(name = "logoutSuccess", defaultValue = "false") logoutSuccess: Boolean,
+        model: Model,
+    ): String {
         if (logoutSuccess) {
-            model.addAttribute(WebUtils.MSG_INFO,
-                    WebUtils.getMessage("authentication.logout.success"))
+            model.addAttribute(
+                WebUtils.MSG_INFO,
+                WebUtils.getMessage("authentication.logout.success"),
+            )
         }
         return "home/index"
     }
-
 }

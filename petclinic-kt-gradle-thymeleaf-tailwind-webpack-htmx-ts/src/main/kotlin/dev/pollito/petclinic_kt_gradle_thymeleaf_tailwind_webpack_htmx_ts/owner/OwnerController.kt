@@ -17,18 +17,17 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.servlet.mvc.support.RedirectAttributes
 
-
 @Controller
 @RequestMapping("/owners")
 class OwnerController(
-    private val ownerService: OwnerService
+    private val ownerService: OwnerService,
 ) {
 
     @GetMapping
     fun list(
         @RequestParam(name = "filter", required = false) filter: String?,
         @SortDefault(sort = ["id"]) @PageableDefault(size = 20) pageable: Pageable,
-        model: Model
+        model: Model,
     ): String {
         val owners = ownerService.findAll(filter, pageable)
         model.addAttribute("owners", owners)
@@ -44,14 +43,16 @@ class OwnerController(
     fun add(
         @ModelAttribute("owner") @Valid ownerDTO: OwnerDTO,
         bindingResult: BindingResult,
-        redirectAttributes: RedirectAttributes
+        redirectAttributes: RedirectAttributes,
     ): String {
         if (bindingResult.hasErrors()) {
             return "owner/add"
         }
         ownerService.create(ownerDTO)
-        redirectAttributes.addFlashAttribute(WebUtils.MSG_SUCCESS,
-                WebUtils.getMessage("owner.create.success"))
+        redirectAttributes.addFlashAttribute(
+            WebUtils.MSG_SUCCESS,
+            WebUtils.getMessage("owner.create.success"),
+        )
         return "redirect:/owners"
     }
 
@@ -66,14 +67,16 @@ class OwnerController(
         @PathVariable(name = "id") id: Int,
         @ModelAttribute("owner") @Valid ownerDTO: OwnerDTO,
         bindingResult: BindingResult,
-        redirectAttributes: RedirectAttributes
+        redirectAttributes: RedirectAttributes,
     ): String {
         if (bindingResult.hasErrors()) {
             return "owner/edit"
         }
         ownerService.update(id, ownerDTO)
-        redirectAttributes.addFlashAttribute(WebUtils.MSG_SUCCESS,
-                WebUtils.getMessage("owner.update.success"))
+        redirectAttributes.addFlashAttribute(
+            WebUtils.MSG_SUCCESS,
+            WebUtils.getMessage("owner.update.success"),
+        )
         return "redirect:/owners"
     }
 
@@ -81,14 +84,19 @@ class OwnerController(
     fun delete(@PathVariable(name = "id") id: Int, redirectAttributes: RedirectAttributes): String {
         try {
             ownerService.delete(id)
-            redirectAttributes.addFlashAttribute(WebUtils.MSG_INFO,
-                    WebUtils.getMessage("owner.delete.success"))
+            redirectAttributes.addFlashAttribute(
+                WebUtils.MSG_INFO,
+                WebUtils.getMessage("owner.delete.success"),
+            )
         } catch (referencedException: ReferencedException) {
-            redirectAttributes.addFlashAttribute(WebUtils.MSG_ERROR,
-                    WebUtils.getMessage(referencedException.key!!,
-                    *referencedException.params.toTypedArray()))
+            redirectAttributes.addFlashAttribute(
+                WebUtils.MSG_ERROR,
+                WebUtils.getMessage(
+                    referencedException.key!!,
+                    *referencedException.params.toTypedArray(),
+                ),
+            )
         }
         return "redirect:/owners"
     }
-
 }

@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next';
 import { getReasonPhrase } from 'http-status-codes';
 import useDocumentTitle from 'app/common/use-document-title';
 
-
 export default function Error() {
   const { t } = useTranslation();
   useDocumentTitle(t('error.page.headline'));
@@ -19,8 +18,12 @@ export default function Error() {
     error = location.state?.errorMessage || getReasonPhrase(status);
   }
 
-  return (<>
-    <h1 className="grow text-3xl md:text-4xl font-medium mb-8">{status} - {error}</h1>
-    <p>{t('error.page.message')}</p>
-  </>);
+  return (
+    <>
+      <h1 className="grow text-3xl md:text-4xl font-medium mb-8">
+        {status} - {error}
+      </h1>
+      <p>{t('error.page.message')}</p>
+    </>
+  );
 }

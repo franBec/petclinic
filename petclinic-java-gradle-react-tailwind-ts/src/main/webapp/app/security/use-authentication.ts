@@ -1,7 +1,6 @@
 import { useContext } from 'react';
 import { AuthenticationContext } from 'app/security/authentication-provider';
 
-
 /**
  * Hook for accessing the current authentication status.
  */

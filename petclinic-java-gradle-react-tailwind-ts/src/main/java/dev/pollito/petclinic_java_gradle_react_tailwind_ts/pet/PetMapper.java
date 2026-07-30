@@ -13,11 +13,7 @@ import org.mapstruct.MappingConstants;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.ReportingPolicy;
 
-
-@Mapper(
-        componentModel = MappingConstants.ComponentModel.SPRING,
-        unmappedTargetPolicy = ReportingPolicy.IGNORE
-)
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING, unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface PetMapper {
 
     @Mapping(target = "type", ignore = true)
@@ -39,11 +35,13 @@ public interface PetMapper {
     @AfterMapping
     default void afterUpdatePet(PetDTO petDTO, @MappingTarget Pet pet,
             @Context TypeRepository typeRepository, @Context OwnerRepository ownerRepository) {
-        final Type type = petDTO.getType() == null ? null : typeRepository.findById(petDTO.getType())
-                .orElseThrow(() -> new NotFoundException("type not found"));
+        final Type type = petDTO.getType() == null ? null
+                : typeRepository.findById(petDTO.getType())
+                        .orElseThrow(() -> new NotFoundException("type not found"));
         pet.setType(type);
-        final Owner owner = petDTO.getOwner() == null ? null : ownerRepository.findById(petDTO.getOwner())
-                .orElseThrow(() -> new NotFoundException("owner not found"));
+        final Owner owner = petDTO.getOwner() == null ? null
+                : ownerRepository.findById(petDTO.getOwner())
+                        .orElseThrow(() -> new NotFoundException("owner not found"));
         pet.setOwner(owner);
     }
 

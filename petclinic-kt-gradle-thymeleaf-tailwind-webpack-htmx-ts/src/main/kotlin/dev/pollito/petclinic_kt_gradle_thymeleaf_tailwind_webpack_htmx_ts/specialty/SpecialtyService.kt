@@ -1,6 +1,5 @@
 package dev.pollito.petclinic_kt_gradle_thymeleaf_tailwind_webpack_htmx_ts.specialty
 
-
 interface SpecialtyService {
 
     fun findAll(): List<SpecialtyDTO>
@@ -14,5 +13,4 @@ interface SpecialtyService {
     fun delete(id: Int)
 
     fun getSpecialtyValues(): Map<Int, Int>
-
 }

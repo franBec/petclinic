@@ -17,12 +17,11 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.servlet.mvc.support.RedirectAttributes
 
-
 @Controller
 @RequestMapping("/vets")
 class VetController(
     private val vetService: VetService,
-    private val specialtyService: SpecialtyService
+    private val specialtyService: SpecialtyService,
 ) {
 
     @ModelAttribute
@@ -34,7 +33,7 @@ class VetController(
     fun list(
         @RequestParam(name = "filter", required = false) filter: String?,
         @SortDefault(sort = ["id"]) @PageableDefault(size = 20) pageable: Pageable,
-        model: Model
+        model: Model,
     ): String {
         val vets = vetService.findAll(filter, pageable)
         model.addAttribute("vets", vets)
@@ -50,14 +49,16 @@ class VetController(
     fun add(
         @ModelAttribute("vet") @Valid vetDTO: VetDTO,
         bindingResult: BindingResult,
-        redirectAttributes: RedirectAttributes
+        redirectAttributes: RedirectAttributes,
     ): String {
         if (bindingResult.hasErrors()) {
             return "vet/add"
         }
         vetService.create(vetDTO)
-        redirectAttributes.addFlashAttribute(WebUtils.MSG_SUCCESS,
-                WebUtils.getMessage("vet.create.success"))
+        redirectAttributes.addFlashAttribute(
+            WebUtils.MSG_SUCCESS,
+            WebUtils.getMessage("vet.create.success"),
+        )
         return "redirect:/vets"
     }
 
@@ -72,23 +73,26 @@ class VetController(
         @PathVariable(name = "id") id: Int,
         @ModelAttribute("vet") @Valid vetDTO: VetDTO,
         bindingResult: BindingResult,
-        redirectAttributes: RedirectAttributes
+        redirectAttributes: RedirectAttributes,
     ): String {
         if (bindingResult.hasErrors()) {
             return "vet/edit"
         }
         vetService.update(id, vetDTO)
-        redirectAttributes.addFlashAttribute(WebUtils.MSG_SUCCESS,
-                WebUtils.getMessage("vet.update.success"))
+        redirectAttributes.addFlashAttribute(
+            WebUtils.MSG_SUCCESS,
+            WebUtils.getMessage("vet.update.success"),
+        )
         return "redirect:/vets"
     }
 
     @PostMapping("/delete/{id}")
     fun delete(@PathVariable(name = "id") id: Int, redirectAttributes: RedirectAttributes): String {
         vetService.delete(id)
-        redirectAttributes.addFlashAttribute(WebUtils.MSG_INFO,
-                WebUtils.getMessage("vet.delete.success"))
+        redirectAttributes.addFlashAttribute(
+            WebUtils.MSG_INFO,
+            WebUtils.getMessage("vet.delete.success"),
+        )
         return "redirect:/vets"
     }
-
 }

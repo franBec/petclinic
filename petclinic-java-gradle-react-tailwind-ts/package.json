@@ -4,7 +4,9 @@
   "scripts": {
     "devserver": "webpack serve --open --mode development",
     "build": "webpack --mode production",
-    "test": "jest"
+    "test": "jest",
+    "format": "prettier --write \"src/main/webapp/**/*.{ts,tsx,css,json,html}\"",
+    "format:check": "prettier --check \"src/main/webapp/**/*.{ts,tsx,css,json,html}\""
   },
   "dependencies": {
     "@hookform/resolvers": "5.4.0",
@@ -40,6 +42,7 @@
     "mini-css-extract-plugin": "2.10.2",
     "postcss-loader": "8.2.1",
     "postcss-preset-env": "11.3.0",
+    "prettier": "3.5.3",
     "style-loader": "4.0.0",
     "tailwindcss": "4.3.0",
     "ts-jest": "29.4.11",

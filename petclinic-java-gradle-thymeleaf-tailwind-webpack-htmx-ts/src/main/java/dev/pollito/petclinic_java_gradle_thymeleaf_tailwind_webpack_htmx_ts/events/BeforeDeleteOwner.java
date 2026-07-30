@@ -3,7 +3,6 @@ package dev.pollito.petclinic_java_gradle_thymeleaf_tailwind_webpack_htmx_ts.eve
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-
 @Getter
 @AllArgsConstructor
 public class BeforeDeleteOwner {

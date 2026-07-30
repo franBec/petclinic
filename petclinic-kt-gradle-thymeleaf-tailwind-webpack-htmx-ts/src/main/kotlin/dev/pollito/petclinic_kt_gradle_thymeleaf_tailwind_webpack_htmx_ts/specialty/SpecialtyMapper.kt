@@ -6,20 +6,17 @@ import org.mapstruct.MappingConstants
 import org.mapstruct.MappingTarget
 import org.mapstruct.ReportingPolicy
 
-
 @Mapper(
     componentModel = MappingConstants.ComponentModel.SPRING,
-    unmappedTargetPolicy = ReportingPolicy.IGNORE
+    unmappedTargetPolicy = ReportingPolicy.IGNORE,
 )
 interface SpecialtyMapper {
 
-    fun updateSpecialtyDTO(specialty: Specialty, @MappingTarget specialtyDTO: SpecialtyDTO):
-            SpecialtyDTO
+    fun updateSpecialtyDTO(specialty: Specialty, @MappingTarget specialtyDTO: SpecialtyDTO): SpecialtyDTO
 
     @Mapping(
         target = "id",
-        ignore = true
+        ignore = true,
     )
     fun updateSpecialty(specialtyDTO: SpecialtyDTO, @MappingTarget specialty: Specialty): Specialty
-
 }

@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
-
 const useDocumentTitle = (title?: string) => {
   const { t } = useTranslation();
   const titleSuffix = t('app.title');

@@ -15,7 +15,6 @@ import jakarta.persistence.SequenceGenerator;
 import lombok.Getter;
 import lombok.Setter;
 
-
 @Entity
 @Table(name = "user_roles")
 @Getter
@@ -24,9 +23,7 @@ public class UserRole {
 
     @Id
     @Column(nullable = false, updatable = false)
-    @GeneratedValue(
-            strategy = GenerationType.IDENTITY
-    )
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY)

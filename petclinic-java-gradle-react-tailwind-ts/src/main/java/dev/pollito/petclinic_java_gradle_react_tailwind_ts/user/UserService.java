@@ -5,7 +5,6 @@ import dev.pollito.petclinic_java_gradle_react_tailwind_ts.util.ReferencedExcept
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
-
 @Service
 public class UserService {
 

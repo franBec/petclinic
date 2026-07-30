@@ -3,7 +3,6 @@ package dev.pollito.petclinic_kt_gradle_thymeleaf_tailwind_webpack_htmx_ts.owner
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 
-
 interface OwnerService {
 
     fun findAll(filter: String?, pageable: Pageable): Page<OwnerDTO>
@@ -17,5 +16,4 @@ interface OwnerService {
     fun delete(id: Int)
 
     fun getOwnerValues(): Map<Int, Int>
-
 }

@@ -7,9 +7,7 @@ import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.OneToMany
-import jakarta.persistence.SequenceGenerator
 import jakarta.persistence.Table
-
 
 @Entity
 @Table(name = "roles")
@@ -18,14 +16,14 @@ class Role {
     @Id
     @Column(
         nullable = false,
-        updatable = false
+        updatable = false,
     )
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Int? = null
 
     @Column(
         nullable = false,
-        length = 20
+        length = 20,
     )
     var name: String? = null
 
@@ -34,5 +32,4 @@ class Role {
 
     @OneToMany(mappedBy = "role")
     var roleUserRoles = mutableSetOf<UserRole>()
-
 }

@@ -9,6 +9,15 @@ plugins {
     kotlin("jvm") version "2.3.21"
     kotlin("plugin.spring") version "2.3.21"
     kotlin("kapt") version "2.3.21"
+    id("com.diffplug.spotless") version "7.0.2"
+}
+
+spotless {
+    kotlin {
+        ktlint().editorConfigOverride(
+            mapOf("ktlint_standard_package-name" to "disabled")
+        )
+    }
 }
 
 group = "dev.pollito"
@@ -65,6 +74,10 @@ val npmRunBuild = tasks.register<com.github.gradle.node.npm.task.NpmTask>("npmRu
 
 tasks.processResources {
     dependsOn(npmRunBuild)
+}
+
+tasks.named("compileKotlin") {
+    dependsOn("spotlessApply")
 }
 
 tasks.getByName<BootRun>("bootRun") {

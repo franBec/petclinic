@@ -6,9 +6,7 @@ import java.util.function.Function
 import java.util.stream.Collector
 import java.util.stream.Collectors
 
-
 class CustomCollectors {
-
 
     companion object {
 
@@ -20,12 +18,11 @@ class CustomCollectors {
          * @return a Collector to collect values in a sorted map
          */
         @JvmStatic
-        fun <T, K, U> toSortedMap(keyMapper: Function<in T, out K?>, valueMapper: Function<in T, out
-                U?>): Collector<T, *, Map<K, U>> = Collectors.toMap(keyMapper,
-                valueMapper,
-                { u, _ -> throw IllegalStateException(String.format("Duplicate key %s", u)) },
-                { LinkedHashMap() })
-
+        fun <T, K, U> toSortedMap(keyMapper: Function<in T, out K?>, valueMapper: Function<in T, out U?>): Collector<T, *, Map<K, U>> = Collectors.toMap(
+            keyMapper,
+            valueMapper,
+            { u, _ -> throw IllegalStateException(String.format("Duplicate key %s", u)) },
+            { LinkedHashMap() },
+        )
     }
-
 }

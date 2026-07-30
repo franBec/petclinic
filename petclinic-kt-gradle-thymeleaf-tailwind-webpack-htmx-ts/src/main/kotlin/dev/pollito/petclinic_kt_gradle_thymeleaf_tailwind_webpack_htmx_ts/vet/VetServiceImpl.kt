@@ -10,13 +10,12 @@ import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
-
 @Service
 @Transactional(rollbackFor = [Exception::class])
 class VetServiceImpl(
     private val vetRepository: VetRepository,
     private val specialtyRepository: SpecialtyRepository,
-    private val vetMapper: VetMapper
+    private val vetMapper: VetMapper,
 ) : VetService {
 
     override fun findAll(filter: String?, pageable: Pageable): Page<VetDTO> {
@@ -26,14 +25,17 @@ class VetServiceImpl(
         } else {
             page = vetRepository.findAll(pageable)
         }
-        return PageImpl(page.content
+        return PageImpl(
+            page.content
                 .map { vet -> vetMapper.updateVetDTO(vet, VetDTO()) },
-                pageable, page.totalElements)
+            pageable,
+            page.totalElements,
+        )
     }
 
     override fun `get`(id: Int): VetDTO = vetRepository.findById(id)
-            .map { vet -> vetMapper.updateVetDTO(vet, VetDTO()) }
-            .orElseThrow { NotFoundException() }
+        .map { vet -> vetMapper.updateVetDTO(vet, VetDTO()) }
+        .orElseThrow { NotFoundException() }
 
     override fun create(vetDTO: VetDTO): Int {
         val vet = Vet()
@@ -43,14 +45,14 @@ class VetServiceImpl(
 
     override fun update(id: Int, vetDTO: VetDTO) {
         val vet = vetRepository.findById(id)
-                .orElseThrow { NotFoundException() }
+            .orElseThrow { NotFoundException() }
         vetMapper.updateVet(vetDTO, vet, specialtyRepository)
         vetRepository.save(vet)
     }
 
     override fun delete(id: Int) {
         val vet = vetRepository.findById(id)
-                .orElseThrow { NotFoundException() }
+            .orElseThrow { NotFoundException() }
         vetRepository.delete(vet)
     }
 
@@ -58,7 +60,7 @@ class VetServiceImpl(
     fun on(event: BeforeDeleteSpecialty) {
         // remove many-to-many relations at owning side
         vetRepository.findAllByVetSpecialtySpecialtiesId(event.id).forEach { vet ->
-                vet.vetSpecialtySpecialties.removeIf { specialty -> specialty.id == event.id } }
+            vet.vetSpecialtySpecialties.removeIf { specialty -> specialty.id == event.id }
+        }
     }
-
 }

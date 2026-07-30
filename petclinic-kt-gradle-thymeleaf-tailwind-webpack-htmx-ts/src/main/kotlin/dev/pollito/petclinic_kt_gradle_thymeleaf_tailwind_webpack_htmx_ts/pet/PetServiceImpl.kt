@@ -13,14 +13,13 @@ import org.springframework.context.event.EventListener
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
 
-
 @Service
 class PetServiceImpl(
     private val petRepository: PetRepository,
     private val typeRepository: TypeRepository,
     private val ownerRepository: OwnerRepository,
     private val publisher: ApplicationEventPublisher,
-    private val petMapper: PetMapper
+    private val petMapper: PetMapper,
 ) : PetService {
 
     override fun findAll(): List<PetDTO> {
@@ -29,8 +28,8 @@ class PetServiceImpl(
     }
 
     override fun `get`(id: Int): PetDTO = petRepository.findById(id)
-            .map { pet -> petMapper.updatePetDTO(pet, PetDTO()) }
-            .orElseThrow { NotFoundException() }
+        .map { pet -> petMapper.updatePetDTO(pet, PetDTO()) }
+        .orElseThrow { NotFoundException() }
 
     override fun create(petDTO: PetDTO): Int {
         val pet = Pet()
@@ -40,21 +39,21 @@ class PetServiceImpl(
 
     override fun update(id: Int, petDTO: PetDTO) {
         val pet = petRepository.findById(id)
-                .orElseThrow { NotFoundException() }
+            .orElseThrow { NotFoundException() }
         petMapper.updatePet(petDTO, pet, typeRepository, ownerRepository)
         petRepository.save(pet)
     }
 
     override fun delete(id: Int) {
         val pet = petRepository.findById(id)
-                .orElseThrow { NotFoundException() }
+            .orElseThrow { NotFoundException() }
         publisher.publishEvent(BeforeDeletePet(id))
         petRepository.delete(pet)
     }
 
     override fun getPetValues(): Map<Int, Int> = petRepository.findAll(Sort.by("id"))
-            .stream()
-            .collect(CustomCollectors.toSortedMap(Pet::id, Pet::id))
+        .stream()
+        .collect(CustomCollectors.toSortedMap(Pet::id, Pet::id))
 
     @EventListener(BeforeDeleteType::class)
     fun on(event: BeforeDeleteType) {
@@ -77,5 +76,4 @@ class PetServiceImpl(
             throw referencedException
         }
     }
-
 }

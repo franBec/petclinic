@@ -16,7 +16,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-
 @Configuration
 @EnableMethodSecurity(prePostEnabled = true)
 public class AdminSecurityConfig {
@@ -47,7 +46,8 @@ public class AdminSecurityConfig {
                 .headers(headers -> headers.frameOptions(frameOptions -> frameOptions.sameOrigin()))
                 .authorizeHttpRequests(authorize -> authorize.anyRequest().permitAll())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterBefore(jwtRequestFilter(adminUserDetailsService, adminTokenService), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(jwtRequestFilter(adminUserDetailsService, adminTokenService),
+                        UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 

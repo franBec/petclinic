@@ -7,12 +7,11 @@ import org.springframework.context.ApplicationEventPublisher
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
 
-
 @Service
 class TypeServiceImpl(
     private val typeRepository: TypeRepository,
     private val publisher: ApplicationEventPublisher,
-    private val typeMapper: TypeMapper
+    private val typeMapper: TypeMapper,
 ) : TypeService {
 
     override fun findAll(): List<TypeDTO> {
@@ -21,8 +20,8 @@ class TypeServiceImpl(
     }
 
     override fun `get`(id: Int): TypeDTO = typeRepository.findById(id)
-            .map { type -> typeMapper.updateTypeDTO(type, TypeDTO()) }
-            .orElseThrow { NotFoundException() }
+        .map { type -> typeMapper.updateTypeDTO(type, TypeDTO()) }
+        .orElseThrow { NotFoundException() }
 
     override fun create(typeDTO: TypeDTO): Int {
         val type = Type()
@@ -32,20 +31,19 @@ class TypeServiceImpl(
 
     override fun update(id: Int, typeDTO: TypeDTO) {
         val type = typeRepository.findById(id)
-                .orElseThrow { NotFoundException() }
+            .orElseThrow { NotFoundException() }
         typeMapper.updateType(typeDTO, type)
         typeRepository.save(type)
     }
 
     override fun delete(id: Int) {
         val type = typeRepository.findById(id)
-                .orElseThrow { NotFoundException() }
+            .orElseThrow { NotFoundException() }
         publisher.publishEvent(BeforeDeleteType(id))
         typeRepository.delete(type)
     }
 
     override fun getTypeValues(): Map<Int, Int> = typeRepository.findAll(Sort.by("id"))
-            .stream()
-            .collect(CustomCollectors.toSortedMap(Type::id, Type::id))
-
+        .stream()
+        .collect(CustomCollectors.toSortedMap(Type::id, Type::id))
 }

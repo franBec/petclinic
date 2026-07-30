@@ -2,5 +2,4 @@ package dev.pollito.petclinic_kt_gradle_thymeleaf_tailwind_webpack_htmx_ts.user_
 
 import org.springframework.data.jpa.repository.JpaRepository
 
-
 interface UserRoleRepository : JpaRepository<UserRole, Int>

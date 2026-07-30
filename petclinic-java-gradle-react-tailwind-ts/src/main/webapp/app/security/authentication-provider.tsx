@@ -4,18 +4,16 @@ import { useMatches, useNavigate } from 'react-router';
 import { AuthenticationResponse } from 'app/security/authentication-model';
 import axios from 'axios';
 
-
-
 export const AuthenticationContext = createContext<{
   isLoggedIn: () => boolean;
-  getToken: () => string|null;
+  getToken: () => string | null;
   login: (authenticationResponse: AuthenticationResponse) => string;
   logout: () => void;
 }>({
   isLoggedIn: () => false,
   getToken: () => null,
   login: () => '',
-  logout: () => {}
+  logout: () => {},
 });
 
 /**
@@ -65,10 +63,10 @@ export const AuthenticationProvider = ({ children }: AuthenticationProviderParam
     localStorage.removeItem('access_token');
     setToken(null);
     navigate('/login', {
-          state: {
-            msgInfo: t('authentication.logout.success')
-          }
-        });
+      state: {
+        msgInfo: t('authentication.logout.success'),
+      },
+    });
   };
 
   const hasAnyRole = () => {
@@ -81,21 +79,22 @@ export const AuthenticationProvider = ({ children }: AuthenticationProviderParam
   };
 
   const getCurrentSeconds = () => {
-    return Math.floor((new Date()).getTime() / 1000);
+    return Math.floor(new Date().getTime() / 1000);
   };
 
   useEffect(() => {
     // include token in outgoing requests
     const interceptor = axios.interceptors.request.use(
-        (config) => {
-          if (localStorage.getItem('access_token')) {
-            config.headers['Authorization'] = 'Bearer ' + localStorage.getItem('access_token');
-          }
-          return config;
-        },
-        (error) => {
-          return Promise.reject(error);
-        });
+      (config) => {
+        if (localStorage.getItem('access_token')) {
+          config.headers['Authorization'] = 'Bearer ' + localStorage.getItem('access_token');
+        }
+        return config;
+      },
+      (error) => {
+        return Promise.reject(error);
+      },
+    );
     setInitCompleted(true);
 
     return () => axios.interceptors.request.eject(interceptor);
@@ -118,17 +117,17 @@ export const AuthenticationProvider = ({ children }: AuthenticationProviderParam
     if (accessError === 'login-required') {
       setLoginSuccessUrl(location.pathname);
       navigate('/login', {
-            state: {
-              msgInfo: t('authentication.login.required')
-            }
-          });
+        state: {
+          msgInfo: t('authentication.login.required'),
+        },
+      });
     } else if (accessError === 'missing-role') {
       navigate('/error', {
-            state: {
-              errorStatus: '403',
-              msgError: t('authentication.role.missing')
-            }
-          });
+        state: {
+          errorStatus: '403',
+          msgError: t('authentication.role.missing'),
+        },
+      });
     }
   }, [matches]);
 
@@ -136,7 +135,11 @@ export const AuthenticationProvider = ({ children }: AuthenticationProviderParam
     // don't render current route
     return;
   }
-  return <AuthenticationContext.Provider value={{ isLoggedIn, getToken, login, logout }}>{initCompleted && children}</AuthenticationContext.Provider>;
+  return (
+    <AuthenticationContext.Provider value={{ isLoggedIn, getToken, login, logout }}>
+      {initCompleted && children}
+    </AuthenticationContext.Provider>
+  );
 };
 
 interface AuthenticationProviderParams {

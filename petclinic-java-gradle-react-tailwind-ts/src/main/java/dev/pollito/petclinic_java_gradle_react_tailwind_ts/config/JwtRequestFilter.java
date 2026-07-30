@@ -16,11 +16,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-
 /**
- * Filter for authorizing requests based on the "Authorization: Bearer ..." header. When
- * a valid JWT has been found, load the user details from the database and set the
- * authenticated principal for the duration of this request.
+ * Filter for authorizing requests based on the "Authorization: Bearer ..." header. When a valid JWT has been found,
+ * load the user details from the database and set the authenticated principal for the duration of this request.
  */
 public class JwtRequestFilter extends OncePerRequestFilter {
 

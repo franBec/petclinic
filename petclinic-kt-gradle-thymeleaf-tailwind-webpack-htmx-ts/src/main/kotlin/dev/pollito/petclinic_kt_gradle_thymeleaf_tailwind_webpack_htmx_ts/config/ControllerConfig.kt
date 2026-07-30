@@ -5,7 +5,6 @@ import org.springframework.web.bind.WebDataBinder
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.InitBinder
 
-
 @ControllerAdvice
 class ControllerConfig {
 
@@ -13,5 +12,4 @@ class ControllerConfig {
     fun initBinder(binder: WebDataBinder) {
         binder.registerCustomEditor(String::class.java, StringTrimmerEditor(true))
     }
-
 }

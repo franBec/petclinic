@@ -11,20 +11,19 @@ import org.mapstruct.MappingConstants
 import org.mapstruct.MappingTarget
 import org.mapstruct.ReportingPolicy
 
-
 @Mapper(
     componentModel = MappingConstants.ComponentModel.SPRING,
-    unmappedTargetPolicy = ReportingPolicy.IGNORE
+    unmappedTargetPolicy = ReportingPolicy.IGNORE,
 )
 interface PetMapper {
 
     @Mapping(
         target = "type",
-        ignore = true
+        ignore = true,
     )
     @Mapping(
         target = "owner",
-        ignore = true
+        ignore = true,
     )
     fun updatePetDTO(pet: Pet, @MappingTarget petDTO: PetDTO): PetDTO
 
@@ -36,21 +35,21 @@ interface PetMapper {
 
     @Mapping(
         target = "id",
-        ignore = true
+        ignore = true,
     )
     @Mapping(
         target = "type",
-        ignore = true
+        ignore = true,
     )
     @Mapping(
         target = "owner",
-        ignore = true
+        ignore = true,
     )
     fun updatePet(
         petDTO: PetDTO,
         @MappingTarget pet: Pet,
         @Context typeRepository: TypeRepository,
-        @Context ownerRepository: OwnerRepository
+        @Context ownerRepository: OwnerRepository,
     ): Pet
 
     @AfterMapping
@@ -58,14 +57,21 @@ interface PetMapper {
         petDTO: PetDTO,
         @MappingTarget pet: Pet,
         @Context typeRepository: TypeRepository,
-        @Context ownerRepository: OwnerRepository
+        @Context ownerRepository: OwnerRepository,
     ) {
-        val type = if (petDTO.type == null) null else typeRepository.findById(petDTO.type!!)
+        val type = if (petDTO.type == null) {
+            null
+        } else {
+            typeRepository.findById(petDTO.type!!)
                 .orElseThrow { NotFoundException("type not found") }
+        }
         pet.type = type
-        val owner = if (petDTO.owner == null) null else ownerRepository.findById(petDTO.owner!!)
+        val owner = if (petDTO.owner == null) {
+            null
+        } else {
+            ownerRepository.findById(petDTO.owner!!)
                 .orElseThrow { NotFoundException("owner not found") }
+        }
         pet.owner = owner
     }
-
 }

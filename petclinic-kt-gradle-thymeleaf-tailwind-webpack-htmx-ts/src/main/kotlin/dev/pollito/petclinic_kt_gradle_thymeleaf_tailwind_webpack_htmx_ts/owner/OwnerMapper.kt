@@ -6,10 +6,9 @@ import org.mapstruct.MappingConstants
 import org.mapstruct.MappingTarget
 import org.mapstruct.ReportingPolicy
 
-
 @Mapper(
     componentModel = MappingConstants.ComponentModel.SPRING,
-    unmappedTargetPolicy = ReportingPolicy.IGNORE
+    unmappedTargetPolicy = ReportingPolicy.IGNORE,
 )
 interface OwnerMapper {
 
@@ -17,8 +16,7 @@ interface OwnerMapper {
 
     @Mapping(
         target = "id",
-        ignore = true
+        ignore = true,
     )
     fun updateOwner(ownerDTO: OwnerDTO, @MappingTarget owner: Owner): Owner
-
 }

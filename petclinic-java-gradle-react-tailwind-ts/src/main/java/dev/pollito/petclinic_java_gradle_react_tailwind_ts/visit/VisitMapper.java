@@ -11,11 +11,7 @@ import org.mapstruct.MappingConstants;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.ReportingPolicy;
 
-
-@Mapper(
-        componentModel = MappingConstants.ComponentModel.SPRING,
-        unmappedTargetPolicy = ReportingPolicy.IGNORE
-)
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING, unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface VisitMapper {
 
     @Mapping(target = "pet", ignore = true)
@@ -34,8 +30,9 @@ public interface VisitMapper {
     @AfterMapping
     default void afterUpdateVisit(VisitDTO visitDTO, @MappingTarget Visit visit,
             @Context PetRepository petRepository) {
-        final Pet pet = visitDTO.getPet() == null ? null : petRepository.findById(visitDTO.getPet())
-                .orElseThrow(() -> new NotFoundException("pet not found"));
+        final Pet pet = visitDTO.getPet() == null ? null
+                : petRepository.findById(visitDTO.getPet())
+                        .orElseThrow(() -> new NotFoundException("pet not found"));
         visit.setPet(pet);
     }
 

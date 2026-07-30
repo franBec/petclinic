@@ -4,7 +4,6 @@ import jakarta.servlet.http.HttpServletRequest
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ModelAttribute
 
-
 /**
  * Provide attributes available in all templates.
  */
@@ -15,7 +14,5 @@ class WebAdvice {
     fun getRequestUri(request: HttpServletRequest): String = request.requestURI
 
     @ModelAttribute("isDevserver")
-    fun getIsDevserver(request: HttpServletRequest): Boolean =
-            "1".equals(request.getHeader("X-Devserver"))
-
+    fun getIsDevserver(request: HttpServletRequest): Boolean = "1".equals(request.getHeader("X-Devserver"))
 }

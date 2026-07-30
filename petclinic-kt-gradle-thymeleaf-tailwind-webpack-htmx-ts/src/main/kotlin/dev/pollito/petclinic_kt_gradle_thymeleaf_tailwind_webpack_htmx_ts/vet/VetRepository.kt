@@ -4,11 +4,9 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 
-
 interface VetRepository : JpaRepository<Vet, Int> {
 
     fun findAllById(id: Int?, pageable: Pageable): Page<Vet>
 
     fun findAllByVetSpecialtySpecialtiesId(id: Int): List<Vet>
-
 }

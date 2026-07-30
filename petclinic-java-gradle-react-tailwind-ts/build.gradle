@@ -3,6 +3,13 @@ plugins {
     id 'io.spring.dependency-management' version '1.1.7'
     id 'java'
     id 'com.github.node-gradle.node' version '7.1.0'
+    id 'com.diffplug.spotless' version '7.0.2'
+}
+
+spotless {
+    java {
+        eclipse().configFile('eclipse-formatter.xml')
+    }
 }
 
 group = 'dev.pollito'
@@ -58,6 +65,19 @@ tasks.register('npmRunBuild', NpmTask) {
     inputs.file('tsconfig.json')
     inputs.file('webpack.config.js')
     outputs.dir(layout.buildDirectory.dir('resources/main/static'))
+}
+
+tasks.register('prettierFormat', NpmTask) {
+    args = ['run', 'format']
+    dependsOn npmInstall
+}
+
+npmRunBuild {
+    dependsOn 'prettierFormat'
+}
+
+tasks.named('compileJava') {
+    dependsOn 'spotlessApply'
 }
 
 processResources {

@@ -3,7 +3,6 @@ package dev.pollito.petclinic_java_gradle_react_tailwind_ts.type;
 import java.util.List;
 import java.util.Map;
 
-
 public interface TypeService {
 
     List<TypeDTO> findAll();

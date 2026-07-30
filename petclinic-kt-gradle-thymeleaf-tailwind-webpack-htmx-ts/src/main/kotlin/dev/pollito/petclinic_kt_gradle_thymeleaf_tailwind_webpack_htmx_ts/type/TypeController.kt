@@ -13,11 +13,10 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.servlet.mvc.support.RedirectAttributes
 
-
 @Controller
 @RequestMapping("/types")
 class TypeController(
-    private val typeService: TypeService
+    private val typeService: TypeService,
 ) {
 
     @GetMapping
@@ -33,14 +32,16 @@ class TypeController(
     fun add(
         @ModelAttribute("type") @Valid typeDTO: TypeDTO,
         bindingResult: BindingResult,
-        redirectAttributes: RedirectAttributes
+        redirectAttributes: RedirectAttributes,
     ): String {
         if (bindingResult.hasErrors()) {
             return "type/add"
         }
         typeService.create(typeDTO)
-        redirectAttributes.addFlashAttribute(WebUtils.MSG_SUCCESS,
-                WebUtils.getMessage("type.create.success"))
+        redirectAttributes.addFlashAttribute(
+            WebUtils.MSG_SUCCESS,
+            WebUtils.getMessage("type.create.success"),
+        )
         return "redirect:/types"
     }
 
@@ -55,14 +56,16 @@ class TypeController(
         @PathVariable(name = "id") id: Int,
         @ModelAttribute("type") @Valid typeDTO: TypeDTO,
         bindingResult: BindingResult,
-        redirectAttributes: RedirectAttributes
+        redirectAttributes: RedirectAttributes,
     ): String {
         if (bindingResult.hasErrors()) {
             return "type/edit"
         }
         typeService.update(id, typeDTO)
-        redirectAttributes.addFlashAttribute(WebUtils.MSG_SUCCESS,
-                WebUtils.getMessage("type.update.success"))
+        redirectAttributes.addFlashAttribute(
+            WebUtils.MSG_SUCCESS,
+            WebUtils.getMessage("type.update.success"),
+        )
         return "redirect:/types"
     }
 
@@ -70,14 +73,19 @@ class TypeController(
     fun delete(@PathVariable(name = "id") id: Int, redirectAttributes: RedirectAttributes): String {
         try {
             typeService.delete(id)
-            redirectAttributes.addFlashAttribute(WebUtils.MSG_INFO,
-                    WebUtils.getMessage("type.delete.success"))
+            redirectAttributes.addFlashAttribute(
+                WebUtils.MSG_INFO,
+                WebUtils.getMessage("type.delete.success"),
+            )
         } catch (referencedException: ReferencedException) {
-            redirectAttributes.addFlashAttribute(WebUtils.MSG_ERROR,
-                    WebUtils.getMessage(referencedException.key!!,
-                    *referencedException.params.toTypedArray()))
+            redirectAttributes.addFlashAttribute(
+                WebUtils.MSG_ERROR,
+                WebUtils.getMessage(
+                    referencedException.key!!,
+                    *referencedException.params.toTypedArray(),
+                ),
+            )
         }
         return "redirect:/types"
     }
-
 }

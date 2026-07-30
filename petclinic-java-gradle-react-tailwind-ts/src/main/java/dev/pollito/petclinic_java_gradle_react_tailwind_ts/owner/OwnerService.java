@@ -4,7 +4,6 @@ import java.util.Map;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-
 public interface OwnerService {
 
     Page<OwnerDTO> findAll(String filter, Pageable pageable);

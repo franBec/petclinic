@@ -9,11 +9,9 @@ import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
-import jakarta.persistence.SequenceGenerator
 import jakarta.persistence.Table
 import java.time.LocalDate
 import java.time.OffsetDateTime
-
 
 @Entity
 @Table(name = "visits")
@@ -22,7 +20,7 @@ class Visit {
     @Id
     @Column(
         nullable = false,
-        updatable = false
+        updatable = false,
     )
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Int? = null
@@ -32,7 +30,7 @@ class Visit {
 
     @Column(
         nullable = false,
-        columnDefinition = "text"
+        columnDefinition = "text",
     )
     var description: String? = null
 
@@ -48,8 +46,7 @@ class Visit {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
         name = "pet_id",
-        nullable = false
+        nullable = false,
     )
     var pet: Pet? = null
-
 }

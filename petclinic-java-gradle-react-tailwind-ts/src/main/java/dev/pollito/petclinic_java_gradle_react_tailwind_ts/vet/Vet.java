@@ -17,7 +17,6 @@ import java.util.Set;
 import lombok.Getter;
 import lombok.Setter;
 
-
 @Entity
 @Table(name = "vets")
 @Getter
@@ -26,9 +25,7 @@ public class Vet {
 
     @Id
     @Column(nullable = false, updatable = false)
-    @GeneratedValue(
-            strategy = GenerationType.IDENTITY
-    )
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @Column(nullable = false, columnDefinition = "text")
@@ -47,11 +44,7 @@ public class Vet {
     private OffsetDateTime deletedAt;
 
     @ManyToMany
-    @JoinTable(
-            name = "vet_specialties",
-            joinColumns = @JoinColumn(name = "vet_id"),
-            inverseJoinColumns = @JoinColumn(name = "specialty_id")
-    )
+    @JoinTable(name = "vet_specialties", joinColumns = @JoinColumn(name = "vet_id"), inverseJoinColumns = @JoinColumn(name = "specialty_id"))
     private Set<Specialty> vetSpecialtySpecialties = new HashSet<>();
 
 }
