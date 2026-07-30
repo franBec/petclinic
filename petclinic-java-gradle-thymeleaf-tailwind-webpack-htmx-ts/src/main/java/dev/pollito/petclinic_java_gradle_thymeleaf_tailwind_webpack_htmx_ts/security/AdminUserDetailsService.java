@@ -27,11 +27,12 @@ public class AdminUserDetailsService implements UserDetailsService {
             log.warn("user not found: {}", username);
             throw new UsernameNotFoundException("User " + username + " not found");
         }
-        final String role = UserRoles.ROLE_UNKNOWN;
-        final List<SimpleGrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(role));
+
         return org.springframework.security.core.userdetails.User.withUsername(username)
                 .password(user.getPassword())
-                .authorities(authorities)
+                .authorities(user.getUsernameUserRoles().stream()
+                        .map(ur -> new SimpleGrantedAuthority(ur.getRole().getName()))
+                        .toList())
                 .build();
     }
 

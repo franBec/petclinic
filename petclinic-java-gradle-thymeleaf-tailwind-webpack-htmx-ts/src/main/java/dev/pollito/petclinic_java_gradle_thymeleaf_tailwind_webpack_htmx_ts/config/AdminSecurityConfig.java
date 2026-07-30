@@ -10,7 +10,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
@@ -21,8 +21,7 @@ public class AdminSecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        // creates hashes with {bcrypt} prefix
-        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+        return new BCryptPasswordEncoder();
     }
 
     @Bean
@@ -36,7 +35,10 @@ public class AdminSecurityConfig {
             @Value("${admin.rememberMeKey}") final String rememberMeKey) {
         return http.cors(withDefaults())
                 .csrf(csrf -> csrf.ignoringRequestMatchers("/actuator/**"))
-                .authorizeHttpRequests(authorize -> authorize.anyRequest().permitAll())
+                .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers("/login", "/css/**", "/js/**", "/images/**", "/favicon.ico", "/error")
+                        .permitAll()
+                        .anyRequest().authenticated())
                 .formLogin(form -> form
                         .loginPage("/login")
                         .failureUrl("/login?loginError=true"))
@@ -45,7 +47,7 @@ public class AdminSecurityConfig {
                         .rememberMeParameter("rememberMe")
                         .key(rememberMeKey))
                 .logout(logout -> logout
-                        .logoutSuccessUrl("/?logoutSuccess=true")
+                        .logoutSuccessUrl("/login?logout=true")
                         .deleteCookies("JSESSIONID"))
                 .exceptionHandling(exception -> exception
                         .authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/login?loginRequired=true")))
