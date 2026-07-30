@@ -17,11 +17,12 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes
 @RequestMapping("/types")
 class TypeController(
     private val typeService: TypeService,
+    private val typeMapper: TypeMapper,
 ) {
 
     @GetMapping
     fun list(model: Model): String {
-        model.addAttribute("types", typeService.findAll())
+        model.addAttribute("types", typeService.findAll().map { typeMapper.map(it) })
         return "type/list"
     }
 
@@ -37,7 +38,7 @@ class TypeController(
         if (bindingResult.hasErrors()) {
             return "type/add"
         }
-        typeService.create(typeDTO)
+        typeService.create(typeMapper.map(typeDTO))
         redirectAttributes.addFlashAttribute(
             WebUtils.MSG_SUCCESS,
             WebUtils.getMessage("type.create.success"),
@@ -47,7 +48,7 @@ class TypeController(
 
     @GetMapping("/edit/{id}")
     fun edit(@PathVariable(name = "id") id: Int, model: Model): String {
-        model.addAttribute("type", typeService.get(id))
+        model.addAttribute("type", typeMapper.map(typeService.get(id)))
         return "type/edit"
     }
 
@@ -61,7 +62,7 @@ class TypeController(
         if (bindingResult.hasErrors()) {
             return "type/edit"
         }
-        typeService.update(id, typeDTO)
+        typeService.update(id, typeMapper.map(typeDTO))
         redirectAttributes.addFlashAttribute(
             WebUtils.MSG_SUCCESS,
             WebUtils.getMessage("type.update.success"),

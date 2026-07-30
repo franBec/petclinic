@@ -5,6 +5,7 @@ import dev.pollito.petclinic_java_gradle_thymeleaf_tailwind_webpack_htmx_ts.util
 import dev.pollito.petclinic_java_gradle_thymeleaf_tailwind_webpack_htmx_ts.util.NotFoundException;
 import java.util.List;
 import java.util.Map;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -12,46 +13,32 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(rollbackFor = Exception.class)
+@RequiredArgsConstructor
 public class SpecialtyServiceImpl implements SpecialtyService {
 
     private final SpecialtyRepository specialtyRepository;
     private final ApplicationEventPublisher publisher;
-    private final SpecialtyMapper specialtyMapper;
 
-    public SpecialtyServiceImpl(final SpecialtyRepository specialtyRepository,
-            final ApplicationEventPublisher publisher, final SpecialtyMapper specialtyMapper) {
-        this.specialtyRepository = specialtyRepository;
-        this.publisher = publisher;
-        this.specialtyMapper = specialtyMapper;
+    @Override
+    public List<Specialty> findAll() {
+        return specialtyRepository.findAll(Sort.by("id"));
     }
 
     @Override
-    public List<SpecialtyDTO> findAll() {
-        final List<Specialty> specialties = specialtyRepository.findAll(Sort.by("id"));
-        return specialties.stream()
-                .map(specialty -> specialtyMapper.updateSpecialtyDTO(specialty, new SpecialtyDTO()))
-                .toList();
-    }
-
-    @Override
-    public SpecialtyDTO get(final Integer id) {
+    public Specialty get(final Integer id) {
         return specialtyRepository.findById(id)
-                .map(specialty -> specialtyMapper.updateSpecialtyDTO(specialty, new SpecialtyDTO()))
                 .orElseThrow(NotFoundException::new);
     }
 
     @Override
-    public Integer create(final SpecialtyDTO specialtyDTO) {
-        final Specialty specialty = new Specialty();
-        specialtyMapper.updateSpecialty(specialtyDTO, specialty);
+    public Integer create(final Specialty specialty) {
         return specialtyRepository.save(specialty).getId();
     }
 
     @Override
-    public void update(final Integer id, final SpecialtyDTO specialtyDTO) {
-        final Specialty specialty = specialtyRepository.findById(id)
-                .orElseThrow(NotFoundException::new);
-        specialtyMapper.updateSpecialty(specialtyDTO, specialty);
+    public void update(final Integer id, final Specialty specialty) {
+        specialty.setId(id);
+        specialtyRepository.findById(id).orElseThrow(NotFoundException::new);
         specialtyRepository.save(specialty);
     }
 
@@ -69,5 +56,4 @@ public class SpecialtyServiceImpl implements SpecialtyService {
                 .stream()
                 .collect(CustomCollectors.toSortedMap(Specialty::getId, Specialty::getId));
     }
-
 }

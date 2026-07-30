@@ -3,29 +3,27 @@ package dev.pollito.petclinic_kt_gradle_thymeleaf_tailwind_webpack_htmx_ts.visit
 import dev.pollito.petclinic_kt_gradle_thymeleaf_tailwind_webpack_htmx_ts.pet.PetRepository
 import dev.pollito.petclinic_kt_gradle_thymeleaf_tailwind_webpack_htmx_ts.util.NotFoundException
 import org.mapstruct.AfterMapping
-import org.mapstruct.Context
 import org.mapstruct.Mapper
 import org.mapstruct.Mapping
 import org.mapstruct.MappingConstants
 import org.mapstruct.MappingTarget
 import org.mapstruct.ReportingPolicy
+import org.springframework.beans.factory.annotation.Autowired
 
 @Mapper(
     componentModel = MappingConstants.ComponentModel.SPRING,
     unmappedTargetPolicy = ReportingPolicy.IGNORE,
 )
-interface VisitMapper {
+abstract class VisitMapper {
+
+    @Autowired
+    protected lateinit var petRepository: PetRepository
 
     @Mapping(
         target = "pet",
-        ignore = true,
+        expression = "java(visit.getPet() == null ? null : visit.getPet().getId())",
     )
-    fun updateVisitDTO(visit: Visit, @MappingTarget visitDTO: VisitDTO): VisitDTO
-
-    @AfterMapping
-    fun afterUpdateVisitDTO(visit: Visit, @MappingTarget visitDTO: VisitDTO) {
-        visitDTO.pet = visit.pet?.id
-    }
+    abstract fun map(visit: Visit): VisitDTO
 
     @Mapping(
         target = "id",
@@ -35,18 +33,10 @@ interface VisitMapper {
         target = "pet",
         ignore = true,
     )
-    fun updateVisit(
-        visitDTO: VisitDTO,
-        @MappingTarget visit: Visit,
-        @Context petRepository: PetRepository,
-    ): Visit
+    abstract fun map(visitDTO: VisitDTO): Visit
 
     @AfterMapping
-    fun afterUpdateVisit(
-        visitDTO: VisitDTO,
-        @MappingTarget visit: Visit,
-        @Context petRepository: PetRepository,
-    ) {
+    protected fun afterMap(visitDTO: VisitDTO, @MappingTarget visit: Visit) {
         val pet = if (visitDTO.pet == null) {
             null
         } else {

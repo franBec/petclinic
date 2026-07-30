@@ -3,6 +3,7 @@ package dev.pollito.petclinic_java_gradle_thymeleaf_tailwind_webpack_htmx_ts.typ
 import dev.pollito.petclinic_java_gradle_thymeleaf_tailwind_webpack_htmx_ts.util.ReferencedException;
 import dev.pollito.petclinic_java_gradle_thymeleaf_tailwind_webpack_htmx_ts.util.WebUtils;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -15,17 +16,15 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/types")
+@RequiredArgsConstructor
 public class TypeController {
 
     private final TypeService typeService;
-
-    public TypeController(final TypeService typeService) {
-        this.typeService = typeService;
-    }
+    private final TypeMapper typeMapper;
 
     @GetMapping
     public String list(final Model model) {
-        model.addAttribute("types", typeService.findAll());
+        model.addAttribute("types", typeService.findAll().stream().map(typeMapper::map).toList());
         return "type/list";
     }
 
@@ -40,14 +39,14 @@ public class TypeController {
         if (bindingResult.hasErrors()) {
             return "type/add";
         }
-        typeService.create(typeDTO);
+        typeService.create(typeMapper.map(typeDTO));
         redirectAttributes.addFlashAttribute(WebUtils.MSG_SUCCESS, WebUtils.getMessage("type.create.success"));
         return "redirect:/types";
     }
 
     @GetMapping("/edit/{id}")
     public String edit(@PathVariable(name = "id") final Integer id, final Model model) {
-        model.addAttribute("type", typeService.get(id));
+        model.addAttribute("type", typeMapper.map(typeService.get(id)));
         return "type/edit";
     }
 
@@ -58,7 +57,7 @@ public class TypeController {
         if (bindingResult.hasErrors()) {
             return "type/edit";
         }
-        typeService.update(id, typeDTO);
+        typeService.update(id, typeMapper.map(typeDTO));
         redirectAttributes.addFlashAttribute(WebUtils.MSG_SUCCESS, WebUtils.getMessage("type.update.success"));
         return "redirect:/types";
     }
@@ -75,5 +74,4 @@ public class TypeController {
         }
         return "redirect:/types";
     }
-
 }

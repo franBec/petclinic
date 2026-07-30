@@ -3,65 +3,44 @@ package dev.pollito.petclinic_java_gradle_react_tailwind_ts.pet;
 import dev.pollito.petclinic_java_gradle_react_tailwind_ts.events.BeforeDeleteOwner;
 import dev.pollito.petclinic_java_gradle_react_tailwind_ts.events.BeforeDeletePet;
 import dev.pollito.petclinic_java_gradle_react_tailwind_ts.events.BeforeDeleteType;
-import dev.pollito.petclinic_java_gradle_react_tailwind_ts.generated.model.PetDTO;
-import dev.pollito.petclinic_java_gradle_react_tailwind_ts.owner.OwnerRepository;
-import dev.pollito.petclinic_java_gradle_react_tailwind_ts.type.TypeRepository;
 import dev.pollito.petclinic_java_gradle_react_tailwind_ts.util.CustomCollectors;
 import dev.pollito.petclinic_java_gradle_react_tailwind_ts.util.NotFoundException;
 import dev.pollito.petclinic_java_gradle_react_tailwind_ts.util.ReferencedException;
 import java.util.List;
 import java.util.Map;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class PetServiceImpl implements PetService {
 
     private final PetRepository petRepository;
-    private final TypeRepository typeRepository;
-    private final OwnerRepository ownerRepository;
     private final ApplicationEventPublisher publisher;
-    private final PetMapper petMapper;
 
-    public PetServiceImpl(final PetRepository petRepository, final TypeRepository typeRepository,
-            final OwnerRepository ownerRepository, final ApplicationEventPublisher publisher,
-            final PetMapper petMapper) {
-        this.petRepository = petRepository;
-        this.typeRepository = typeRepository;
-        this.ownerRepository = ownerRepository;
-        this.publisher = publisher;
-        this.petMapper = petMapper;
+    @Override
+    public List<Pet> findAll() {
+        return petRepository.findAll(Sort.by("id"));
     }
 
     @Override
-    public List<PetDTO> findAll() {
-        final List<Pet> pets = petRepository.findAll(Sort.by("id"));
-        return pets.stream()
-                .map(pet -> petMapper.updatePetDTO(pet, new PetDTO()))
-                .toList();
-    }
-
-    @Override
-    public PetDTO get(final Integer id) {
+    public Pet get(final Integer id) {
         return petRepository.findById(id)
-                .map(pet -> petMapper.updatePetDTO(pet, new PetDTO()))
                 .orElseThrow(NotFoundException::new);
     }
 
     @Override
-    public Integer create(final PetDTO petDTO) {
-        final Pet pet = new Pet();
-        petMapper.updatePet(petDTO, pet, typeRepository, ownerRepository);
+    public Integer create(final Pet pet) {
         return petRepository.save(pet).getId();
     }
 
     @Override
-    public void update(final Integer id, final PetDTO petDTO) {
-        final Pet pet = petRepository.findById(id)
-                .orElseThrow(NotFoundException::new);
-        petMapper.updatePet(petDTO, pet, typeRepository, ownerRepository);
+    public void update(final Integer id, final Pet pet) {
+        pet.setId(id);
+        petRepository.findById(id).orElseThrow(NotFoundException::new);
         petRepository.save(pet);
     }
 
@@ -101,5 +80,4 @@ public class PetServiceImpl implements PetService {
             throw referencedException;
         }
     }
-
 }

@@ -3,15 +3,13 @@ package dev.pollito.petclinic_java_gradle_thymeleaf_tailwind_webpack_htmx_ts.typ
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
-import org.mapstruct.MappingTarget;
 import org.mapstruct.ReportingPolicy;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING, unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface TypeMapper {
 
-    TypeDTO updateTypeDTO(Type type, @MappingTarget TypeDTO typeDTO);
+    TypeDTO map(Type type);
 
     @Mapping(target = "id", ignore = true)
-    Type updateType(TypeDTO typeDTO, @MappingTarget Type type);
-
+    Type map(TypeDTO typeDTO);
 }

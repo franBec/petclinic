@@ -1,22 +1,20 @@
 package dev.pollito.petclinic_java_gradle_react_tailwind_ts.owner;
 
-import dev.pollito.petclinic_java_gradle_react_tailwind_ts.generated.model.OwnerDTO;
 import java.util.Map;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface OwnerService {
 
-    Page<OwnerDTO> findAll(String filter, Pageable pageable);
+    Page<Owner> findAll(String filter, Pageable pageable);
 
-    OwnerDTO get(Integer id);
+    Owner get(Integer id);
 
-    Integer create(OwnerDTO ownerDTO);
+    Integer create(Owner owner);
 
-    void update(Integer id, OwnerDTO ownerDTO);
+    void update(Integer id, Owner owner);
 
     void delete(Integer id);
 
     Map<Integer, Integer> getOwnerValues();
-
 }

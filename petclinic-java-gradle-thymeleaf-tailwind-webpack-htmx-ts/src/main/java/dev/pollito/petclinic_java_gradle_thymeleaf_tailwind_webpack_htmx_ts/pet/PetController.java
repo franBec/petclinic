@@ -5,6 +5,7 @@ import dev.pollito.petclinic_java_gradle_thymeleaf_tailwind_webpack_htmx_ts.type
 import dev.pollito.petclinic_java_gradle_thymeleaf_tailwind_webpack_htmx_ts.util.ReferencedException;
 import dev.pollito.petclinic_java_gradle_thymeleaf_tailwind_webpack_htmx_ts.util.WebUtils;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -17,18 +18,13 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/pets")
+@RequiredArgsConstructor
 public class PetController {
 
     private final PetService petService;
     private final TypeService typeService;
     private final OwnerService ownerService;
-
-    public PetController(final PetService petService, final TypeService typeService,
-            final OwnerService ownerService) {
-        this.petService = petService;
-        this.typeService = typeService;
-        this.ownerService = ownerService;
-    }
+    private final PetMapper petMapper;
 
     @ModelAttribute
     public void prepareContext(final Model model) {
@@ -38,7 +34,7 @@ public class PetController {
 
     @GetMapping
     public String list(final Model model) {
-        model.addAttribute("pets", petService.findAll());
+        model.addAttribute("pets", petService.findAll().stream().map(petMapper::map).toList());
         return "pet/list";
     }
 
@@ -53,14 +49,14 @@ public class PetController {
         if (bindingResult.hasErrors()) {
             return "pet/add";
         }
-        petService.create(petDTO);
+        petService.create(petMapper.map(petDTO));
         redirectAttributes.addFlashAttribute(WebUtils.MSG_SUCCESS, WebUtils.getMessage("pet.create.success"));
         return "redirect:/pets";
     }
 
     @GetMapping("/edit/{id}")
     public String edit(@PathVariable(name = "id") final Integer id, final Model model) {
-        model.addAttribute("pet", petService.get(id));
+        model.addAttribute("pet", petMapper.map(petService.get(id)));
         return "pet/edit";
     }
 
@@ -71,7 +67,7 @@ public class PetController {
         if (bindingResult.hasErrors()) {
             return "pet/edit";
         }
-        petService.update(id, petDTO);
+        petService.update(id, petMapper.map(petDTO));
         redirectAttributes.addFlashAttribute(WebUtils.MSG_SUCCESS, WebUtils.getMessage("pet.update.success"));
         return "redirect:/pets";
     }
@@ -88,5 +84,4 @@ public class PetController {
         }
         return "redirect:/pets";
     }
-
 }

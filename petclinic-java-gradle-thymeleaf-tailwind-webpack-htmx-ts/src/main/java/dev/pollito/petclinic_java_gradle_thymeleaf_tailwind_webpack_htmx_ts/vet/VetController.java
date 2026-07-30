@@ -3,6 +3,7 @@ package dev.pollito.petclinic_java_gradle_thymeleaf_tailwind_webpack_htmx_ts.vet
 import dev.pollito.petclinic_java_gradle_thymeleaf_tailwind_webpack_htmx_ts.specialty.SpecialtyService;
 import dev.pollito.petclinic_java_gradle_thymeleaf_tailwind_webpack_htmx_ts.util.WebUtils;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -20,15 +21,12 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/vets")
+@RequiredArgsConstructor
 public class VetController {
 
     private final VetService vetService;
     private final SpecialtyService specialtyService;
-
-    public VetController(final VetService vetService, final SpecialtyService specialtyService) {
-        this.vetService = vetService;
-        this.specialtyService = specialtyService;
-    }
+    private final VetMapper vetMapper;
 
     @ModelAttribute
     public void prepareContext(final Model model) {
@@ -39,8 +37,8 @@ public class VetController {
     public String list(@RequestParam(name = "filter", required = false) final String filter,
             @SortDefault(sort = "id") @PageableDefault(size = 20) final Pageable pageable,
             final Model model) {
-        final Page<VetDTO> vets = vetService.findAll(filter, pageable);
-        model.addAttribute("vets", vets);
+        final Page<Vet> vets = vetService.findAll(filter, pageable);
+        model.addAttribute("vets", vets.map(vetMapper::map));
         model.addAttribute("filter", filter);
         model.addAttribute("paginationModel", WebUtils.getPaginationModel(vets));
         return "vet/list";
@@ -57,14 +55,14 @@ public class VetController {
         if (bindingResult.hasErrors()) {
             return "vet/add";
         }
-        vetService.create(vetDTO);
+        vetService.create(vetMapper.map(vetDTO));
         redirectAttributes.addFlashAttribute(WebUtils.MSG_SUCCESS, WebUtils.getMessage("vet.create.success"));
         return "redirect:/vets";
     }
 
     @GetMapping("/edit/{id}")
     public String edit(@PathVariable(name = "id") final Integer id, final Model model) {
-        model.addAttribute("vet", vetService.get(id));
+        model.addAttribute("vet", vetMapper.map(vetService.get(id)));
         return "vet/edit";
     }
 
@@ -75,7 +73,7 @@ public class VetController {
         if (bindingResult.hasErrors()) {
             return "vet/edit";
         }
-        vetService.update(id, vetDTO);
+        vetService.update(id, vetMapper.map(vetDTO));
         redirectAttributes.addFlashAttribute(WebUtils.MSG_SUCCESS, WebUtils.getMessage("vet.update.success"));
         return "redirect:/vets";
     }
@@ -87,5 +85,4 @@ public class VetController {
         redirectAttributes.addFlashAttribute(WebUtils.MSG_INFO, WebUtils.getMessage("vet.delete.success"));
         return "redirect:/vets";
     }
-
 }

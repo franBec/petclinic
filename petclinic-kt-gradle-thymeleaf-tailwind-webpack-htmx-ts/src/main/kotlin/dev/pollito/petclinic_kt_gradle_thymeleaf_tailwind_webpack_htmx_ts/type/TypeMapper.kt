@@ -3,7 +3,6 @@ package dev.pollito.petclinic_kt_gradle_thymeleaf_tailwind_webpack_htmx_ts.type
 import org.mapstruct.Mapper
 import org.mapstruct.Mapping
 import org.mapstruct.MappingConstants
-import org.mapstruct.MappingTarget
 import org.mapstruct.ReportingPolicy
 
 @Mapper(
@@ -12,11 +11,11 @@ import org.mapstruct.ReportingPolicy
 )
 interface TypeMapper {
 
-    fun updateTypeDTO(type: Type, @MappingTarget typeDTO: TypeDTO): TypeDTO
+    fun map(type: Type): TypeDTO
 
     @Mapping(
         target = "id",
         ignore = true,
     )
-    fun updateType(typeDTO: TypeDTO, @MappingTarget type: Type): Type
+    fun map(typeDTO: TypeDTO): Type
 }

@@ -22,6 +22,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes
 class VetController(
     private val vetService: VetService,
     private val specialtyService: SpecialtyService,
+    private val vetMapper: VetMapper,
 ) {
 
     @ModelAttribute
@@ -36,7 +37,7 @@ class VetController(
         model: Model,
     ): String {
         val vets = vetService.findAll(filter, pageable)
-        model.addAttribute("vets", vets)
+        model.addAttribute("vets", vets.map { vetMapper.map(it) })
         model.addAttribute("filter", filter)
         model.addAttribute("paginationModel", WebUtils.getPaginationModel(vets))
         return "vet/list"
@@ -54,7 +55,7 @@ class VetController(
         if (bindingResult.hasErrors()) {
             return "vet/add"
         }
-        vetService.create(vetDTO)
+        vetService.create(vetMapper.map(vetDTO))
         redirectAttributes.addFlashAttribute(
             WebUtils.MSG_SUCCESS,
             WebUtils.getMessage("vet.create.success"),
@@ -64,7 +65,7 @@ class VetController(
 
     @GetMapping("/edit/{id}")
     fun edit(@PathVariable(name = "id") id: Int, model: Model): String {
-        model.addAttribute("vet", vetService.get(id))
+        model.addAttribute("vet", vetMapper.map(vetService.get(id)))
         return "vet/edit"
     }
 
@@ -78,7 +79,7 @@ class VetController(
         if (bindingResult.hasErrors()) {
             return "vet/edit"
         }
-        vetService.update(id, vetDTO)
+        vetService.update(id, vetMapper.map(vetDTO))
         redirectAttributes.addFlashAttribute(
             WebUtils.MSG_SUCCESS,
             WebUtils.getMessage("vet.update.success"),

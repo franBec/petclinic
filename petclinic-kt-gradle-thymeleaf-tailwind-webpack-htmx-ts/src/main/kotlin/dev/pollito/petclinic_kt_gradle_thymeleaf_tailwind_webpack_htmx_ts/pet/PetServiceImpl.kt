@@ -3,8 +3,6 @@ package dev.pollito.petclinic_kt_gradle_thymeleaf_tailwind_webpack_htmx_ts.pet
 import dev.pollito.petclinic_kt_gradle_thymeleaf_tailwind_webpack_htmx_ts.events.BeforeDeleteOwner
 import dev.pollito.petclinic_kt_gradle_thymeleaf_tailwind_webpack_htmx_ts.events.BeforeDeletePet
 import dev.pollito.petclinic_kt_gradle_thymeleaf_tailwind_webpack_htmx_ts.events.BeforeDeleteType
-import dev.pollito.petclinic_kt_gradle_thymeleaf_tailwind_webpack_htmx_ts.owner.OwnerRepository
-import dev.pollito.petclinic_kt_gradle_thymeleaf_tailwind_webpack_htmx_ts.type.TypeRepository
 import dev.pollito.petclinic_kt_gradle_thymeleaf_tailwind_webpack_htmx_ts.util.CustomCollectors
 import dev.pollito.petclinic_kt_gradle_thymeleaf_tailwind_webpack_htmx_ts.util.NotFoundException
 import dev.pollito.petclinic_kt_gradle_thymeleaf_tailwind_webpack_htmx_ts.util.ReferencedException
@@ -16,31 +14,19 @@ import org.springframework.stereotype.Service
 @Service
 class PetServiceImpl(
     private val petRepository: PetRepository,
-    private val typeRepository: TypeRepository,
-    private val ownerRepository: OwnerRepository,
     private val publisher: ApplicationEventPublisher,
-    private val petMapper: PetMapper,
 ) : PetService {
 
-    override fun findAll(): List<PetDTO> {
-        val pets = petRepository.findAll(Sort.by("id"))
-        return pets.map { pet -> petMapper.updatePetDTO(pet, PetDTO()) }
-    }
+    override fun findAll(): List<Pet> = petRepository.findAll(Sort.by("id"))
 
-    override fun `get`(id: Int): PetDTO = petRepository.findById(id)
-        .map { pet -> petMapper.updatePetDTO(pet, PetDTO()) }
+    override fun `get`(id: Int): Pet = petRepository.findById(id)
         .orElseThrow { NotFoundException() }
 
-    override fun create(petDTO: PetDTO): Int {
-        val pet = Pet()
-        petMapper.updatePet(petDTO, pet, typeRepository, ownerRepository)
-        return petRepository.save(pet).id!!
-    }
+    override fun create(pet: Pet): Int = petRepository.save(pet).id!!
 
-    override fun update(id: Int, petDTO: PetDTO) {
-        val pet = petRepository.findById(id)
-            .orElseThrow { NotFoundException() }
-        petMapper.updatePet(petDTO, pet, typeRepository, ownerRepository)
+    override fun update(id: Int, pet: Pet) {
+        pet.id = id
+        petRepository.findById(id).orElseThrow { NotFoundException() }
         petRepository.save(pet)
     }
 

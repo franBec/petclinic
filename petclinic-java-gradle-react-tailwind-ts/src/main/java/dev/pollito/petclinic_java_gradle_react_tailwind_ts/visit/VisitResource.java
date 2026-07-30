@@ -9,20 +9,18 @@ import dev.pollito.petclinic_java_gradle_react_tailwind_ts.generated.model.Visit
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import java.time.OffsetDateTime;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@RequiredArgsConstructor
 public class VisitResource implements VisitApi {
 
     private final VisitService visitService;
+    private final VisitMapper visitMapper;
     private final HttpServletRequest request;
-
-    public VisitResource(final VisitService visitService, final HttpServletRequest request) {
-        this.visitService = visitService;
-        this.request = request;
-    }
 
     @Override
     public ResponseEntity<VisitListResponse> getAllVisits() {
@@ -32,7 +30,7 @@ public class VisitResource implements VisitApi {
                         .status(HttpStatus.OK.value())
                         .timestamp(OffsetDateTime.now())
                         .trace("")
-                        .data(visitService.findAll()));
+                        .data(visitService.findAll().stream().map(visitMapper::map).toList()));
     }
 
     @Override
@@ -43,12 +41,12 @@ public class VisitResource implements VisitApi {
                         .status(HttpStatus.OK.value())
                         .timestamp(OffsetDateTime.now())
                         .trace("")
-                        .data(visitService.get(id)));
+                        .data(visitMapper.map(visitService.get(id))));
     }
 
     @Override
     public ResponseEntity<VisitCreateResponse> createVisit(@Valid final VisitDTO visitDTO) {
-        Integer createdId = visitService.create(visitDTO);
+        Integer createdId = visitService.create(visitMapper.map(visitDTO));
         return new ResponseEntity<>(
                 new VisitCreateResponse()
                         .instance(request.getRequestURI())
@@ -62,7 +60,7 @@ public class VisitResource implements VisitApi {
     @Override
     public ResponseEntity<VisitUpdateResponse> updateVisit(
             final Integer id, @Valid final VisitDTO visitDTO) {
-        visitService.update(id, visitDTO);
+        visitService.update(id, visitMapper.map(visitDTO));
         return ResponseEntity.ok(
                 new VisitUpdateResponse()
                         .instance(request.getRequestURI())

@@ -4,34 +4,34 @@ import dev.pollito.petclinic_kt_gradle_thymeleaf_tailwind_webpack_htmx_ts.owner.
 import dev.pollito.petclinic_kt_gradle_thymeleaf_tailwind_webpack_htmx_ts.type.TypeRepository
 import dev.pollito.petclinic_kt_gradle_thymeleaf_tailwind_webpack_htmx_ts.util.NotFoundException
 import org.mapstruct.AfterMapping
-import org.mapstruct.Context
 import org.mapstruct.Mapper
 import org.mapstruct.Mapping
 import org.mapstruct.MappingConstants
 import org.mapstruct.MappingTarget
 import org.mapstruct.ReportingPolicy
+import org.springframework.beans.factory.annotation.Autowired
 
 @Mapper(
     componentModel = MappingConstants.ComponentModel.SPRING,
     unmappedTargetPolicy = ReportingPolicy.IGNORE,
 )
-interface PetMapper {
+abstract class PetMapper {
+
+    @Autowired
+    protected lateinit var typeRepository: TypeRepository
+
+    @Autowired
+    protected lateinit var ownerRepository: OwnerRepository
 
     @Mapping(
         target = "type",
-        ignore = true,
+        expression = "java(pet.getType() == null ? null : pet.getType().getId())",
     )
     @Mapping(
         target = "owner",
-        ignore = true,
+        expression = "java(pet.getOwner() == null ? null : pet.getOwner().getId())",
     )
-    fun updatePetDTO(pet: Pet, @MappingTarget petDTO: PetDTO): PetDTO
-
-    @AfterMapping
-    fun afterUpdatePetDTO(pet: Pet, @MappingTarget petDTO: PetDTO) {
-        petDTO.type = pet.type?.id
-        petDTO.owner = pet.owner?.id
-    }
+    abstract fun map(pet: Pet): PetDTO
 
     @Mapping(
         target = "id",
@@ -45,20 +45,10 @@ interface PetMapper {
         target = "owner",
         ignore = true,
     )
-    fun updatePet(
-        petDTO: PetDTO,
-        @MappingTarget pet: Pet,
-        @Context typeRepository: TypeRepository,
-        @Context ownerRepository: OwnerRepository,
-    ): Pet
+    abstract fun map(petDTO: PetDTO): Pet
 
     @AfterMapping
-    fun afterUpdatePet(
-        petDTO: PetDTO,
-        @MappingTarget pet: Pet,
-        @Context typeRepository: TypeRepository,
-        @Context ownerRepository: OwnerRepository,
-    ) {
+    protected fun afterMap(petDTO: PetDTO, @MappingTarget pet: Pet) {
         val type = if (petDTO.type == null) {
             null
         } else {

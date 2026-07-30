@@ -10,6 +10,7 @@ import dev.pollito.petclinic_java_gradle_react_tailwind_ts.generated.model.VetUp
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import java.time.OffsetDateTime;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -19,23 +20,20 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@RequiredArgsConstructor
 public class VetResource implements VetApi {
 
     private final VetService vetService;
+    private final VetMapper vetMapper;
     private final HttpServletRequest request;
-
-    public VetResource(final VetService vetService, final HttpServletRequest request) {
-        this.vetService = vetService;
-        this.request = request;
-    }
 
     @Override
     public ResponseEntity<VetListResponse> getAllVets(
             final String filter,
             @SortDefault(sort = "id") @PageableDefault(size = 20) final Pageable pageable) {
-        Page<VetDTO> page = vetService.findAll(filter, pageable);
+        Page<Vet> page = vetService.findAll(filter, pageable);
         VetListData data = new VetListData()
-                .content(page.getContent())
+                .content(page.getContent().stream().map(vetMapper::map).toList())
                 .page(page.getNumber())
                 .size(page.getSize())
                 .totalElements(page.getTotalElements())
@@ -57,12 +55,12 @@ public class VetResource implements VetApi {
                         .status(HttpStatus.OK.value())
                         .timestamp(OffsetDateTime.now())
                         .trace("")
-                        .data(vetService.get(id)));
+                        .data(vetMapper.map(vetService.get(id))));
     }
 
     @Override
     public ResponseEntity<VetCreateResponse> createVet(@Valid final VetDTO vetDTO) {
-        Integer createdId = vetService.create(vetDTO);
+        Integer createdId = vetService.create(vetMapper.map(vetDTO));
         return new ResponseEntity<>(
                 new VetCreateResponse()
                         .instance(request.getRequestURI())
@@ -76,7 +74,7 @@ public class VetResource implements VetApi {
     @Override
     public ResponseEntity<VetUpdateResponse> updateVet(
             final Integer id, @Valid final VetDTO vetDTO) {
-        vetService.update(id, vetDTO);
+        vetService.update(id, vetMapper.map(vetDTO));
         return ResponseEntity.ok(
                 new VetUpdateResponse()
                         .instance(request.getRequestURI())

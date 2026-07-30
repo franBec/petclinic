@@ -1,55 +1,40 @@
 package dev.pollito.petclinic_java_gradle_thymeleaf_tailwind_webpack_htmx_ts.visit;
 
 import dev.pollito.petclinic_java_gradle_thymeleaf_tailwind_webpack_htmx_ts.events.BeforeDeletePet;
-import dev.pollito.petclinic_java_gradle_thymeleaf_tailwind_webpack_htmx_ts.pet.PetRepository;
 import dev.pollito.petclinic_java_gradle_thymeleaf_tailwind_webpack_htmx_ts.util.NotFoundException;
 import dev.pollito.petclinic_java_gradle_thymeleaf_tailwind_webpack_htmx_ts.util.ReferencedException;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class VisitServiceImpl implements VisitService {
 
     private final VisitRepository visitRepository;
-    private final PetRepository petRepository;
-    private final VisitMapper visitMapper;
 
-    public VisitServiceImpl(final VisitRepository visitRepository,
-            final PetRepository petRepository, final VisitMapper visitMapper) {
-        this.visitRepository = visitRepository;
-        this.petRepository = petRepository;
-        this.visitMapper = visitMapper;
+    @Override
+    public List<Visit> findAll() {
+        return visitRepository.findAll(Sort.by("id"));
     }
 
     @Override
-    public List<VisitDTO> findAll() {
-        final List<Visit> visits = visitRepository.findAll(Sort.by("id"));
-        return visits.stream()
-                .map(visit -> visitMapper.updateVisitDTO(visit, new VisitDTO()))
-                .toList();
-    }
-
-    @Override
-    public VisitDTO get(final Integer id) {
+    public Visit get(final Integer id) {
         return visitRepository.findById(id)
-                .map(visit -> visitMapper.updateVisitDTO(visit, new VisitDTO()))
                 .orElseThrow(NotFoundException::new);
     }
 
     @Override
-    public Integer create(final VisitDTO visitDTO) {
-        final Visit visit = new Visit();
-        visitMapper.updateVisit(visitDTO, visit, petRepository);
+    public Integer create(final Visit visit) {
         return visitRepository.save(visit).getId();
     }
 
     @Override
-    public void update(final Integer id, final VisitDTO visitDTO) {
-        final Visit visit = visitRepository.findById(id)
-                .orElseThrow(NotFoundException::new);
-        visitMapper.updateVisit(visitDTO, visit, petRepository);
+    public void update(final Integer id, final Visit visit) {
+        visit.setId(id);
+        visitRepository.findById(id).orElseThrow(NotFoundException::new);
         visitRepository.save(visit);
     }
 
@@ -70,5 +55,4 @@ public class VisitServiceImpl implements VisitService {
             throw referencedException;
         }
     }
-
 }

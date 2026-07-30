@@ -21,6 +21,7 @@ class PetController(
     private val petService: PetService,
     private val typeService: TypeService,
     private val ownerService: OwnerService,
+    private val petMapper: PetMapper,
 ) {
 
     @ModelAttribute
@@ -31,7 +32,7 @@ class PetController(
 
     @GetMapping
     fun list(model: Model): String {
-        model.addAttribute("pets", petService.findAll())
+        model.addAttribute("pets", petService.findAll().map { petMapper.map(it) })
         return "pet/list"
     }
 
@@ -47,7 +48,7 @@ class PetController(
         if (bindingResult.hasErrors()) {
             return "pet/add"
         }
-        petService.create(petDTO)
+        petService.create(petMapper.map(petDTO))
         redirectAttributes.addFlashAttribute(
             WebUtils.MSG_SUCCESS,
             WebUtils.getMessage("pet.create.success"),
@@ -57,7 +58,7 @@ class PetController(
 
     @GetMapping("/edit/{id}")
     fun edit(@PathVariable(name = "id") id: Int, model: Model): String {
-        model.addAttribute("pet", petService.get(id))
+        model.addAttribute("pet", petMapper.map(petService.get(id)))
         return "pet/edit"
     }
 
@@ -71,7 +72,7 @@ class PetController(
         if (bindingResult.hasErrors()) {
             return "pet/edit"
         }
-        petService.update(id, petDTO)
+        petService.update(id, petMapper.map(petDTO))
         redirectAttributes.addFlashAttribute(
             WebUtils.MSG_SUCCESS,
             WebUtils.getMessage("pet.update.success"),

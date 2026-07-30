@@ -5,7 +5,6 @@ import dev.pollito.petclinic_kt_gradle_thymeleaf_tailwind_webpack_htmx_ts.util.C
 import dev.pollito.petclinic_kt_gradle_thymeleaf_tailwind_webpack_htmx_ts.util.NotFoundException
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.data.domain.Page
-import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
@@ -14,38 +13,22 @@ import org.springframework.stereotype.Service
 class OwnerServiceImpl(
     private val ownerRepository: OwnerRepository,
     private val publisher: ApplicationEventPublisher,
-    private val ownerMapper: OwnerMapper,
 ) : OwnerService {
 
-    override fun findAll(filter: String?, pageable: Pageable): Page<OwnerDTO> {
-        var page: Page<Owner>
-        if (filter != null) {
-            page = ownerRepository.findAllById(filter.toIntOrNull(), pageable)
-        } else {
-            page = ownerRepository.findAll(pageable)
-        }
-        return PageImpl(
-            page.content
-                .map { owner -> ownerMapper.updateOwnerDTO(owner, OwnerDTO()) },
-            pageable,
-            page.totalElements,
-        )
+    override fun findAll(filter: String?, pageable: Pageable): Page<Owner> = if (filter != null) {
+        ownerRepository.findAllById(filter.toIntOrNull(), pageable)
+    } else {
+        ownerRepository.findAll(pageable)
     }
 
-    override fun `get`(id: Int): OwnerDTO = ownerRepository.findById(id)
-        .map { owner -> ownerMapper.updateOwnerDTO(owner, OwnerDTO()) }
+    override fun `get`(id: Int): Owner = ownerRepository.findById(id)
         .orElseThrow { NotFoundException() }
 
-    override fun create(ownerDTO: OwnerDTO): Int {
-        val owner = Owner()
-        ownerMapper.updateOwner(ownerDTO, owner)
-        return ownerRepository.save(owner).id!!
-    }
+    override fun create(owner: Owner): Int = ownerRepository.save(owner).id!!
 
-    override fun update(id: Int, ownerDTO: OwnerDTO) {
-        val owner = ownerRepository.findById(id)
-            .orElseThrow { NotFoundException() }
-        ownerMapper.updateOwner(ownerDTO, owner)
+    override fun update(id: Int, owner: Owner) {
+        owner.id = id
+        ownerRepository.findById(id).orElseThrow { NotFoundException() }
         ownerRepository.save(owner)
     }
 

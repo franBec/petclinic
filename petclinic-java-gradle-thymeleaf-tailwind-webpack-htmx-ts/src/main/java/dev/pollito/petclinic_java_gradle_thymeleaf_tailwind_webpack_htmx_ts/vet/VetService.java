@@ -5,14 +5,13 @@ import org.springframework.data.domain.Pageable;
 
 public interface VetService {
 
-    Page<VetDTO> findAll(String filter, Pageable pageable);
+    Page<Vet> findAll(String filter, Pageable pageable);
 
-    VetDTO get(Integer id);
+    Vet get(Integer id);
 
-    Integer create(VetDTO vetDTO);
+    Integer create(Vet vet);
 
-    void update(Integer id, VetDTO vetDTO);
+    void update(Integer id, Vet vet);
 
     void delete(Integer id);
-
 }

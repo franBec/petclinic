@@ -5,36 +5,31 @@ import dev.pollito.petclinic_java_gradle_react_tailwind_ts.pet.Pet;
 import dev.pollito.petclinic_java_gradle_react_tailwind_ts.pet.PetRepository;
 import dev.pollito.petclinic_java_gradle_react_tailwind_ts.util.NotFoundException;
 import org.mapstruct.AfterMapping;
-import org.mapstruct.Context;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.ReportingPolicy;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING, unmappedTargetPolicy = ReportingPolicy.IGNORE)
-public interface VisitMapper {
+public abstract class VisitMapper {
 
-    @Mapping(target = "pet", ignore = true)
-    VisitDTO updateVisitDTO(Visit visit, @MappingTarget VisitDTO visitDTO);
+    @Autowired
+    protected PetRepository petRepository;
 
-    @AfterMapping
-    default void afterUpdateVisitDTO(Visit visit, @MappingTarget VisitDTO visitDTO) {
-        visitDTO.setPet(visit.getPet() == null ? null : visit.getPet().getId());
-    }
+    @Mapping(target = "pet", expression = "java(visit.getPet() == null ? null : visit.getPet().getId())")
+    public abstract VisitDTO map(Visit visit);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "pet", ignore = true)
-    Visit updateVisit(VisitDTO visitDTO, @MappingTarget Visit visit,
-            @Context PetRepository petRepository);
+    public abstract Visit map(VisitDTO visitDTO);
 
     @AfterMapping
-    default void afterUpdateVisit(VisitDTO visitDTO, @MappingTarget Visit visit,
-            @Context PetRepository petRepository) {
+    protected void afterMap(VisitDTO visitDTO, @MappingTarget Visit visit) {
         final Pet pet = visitDTO.getPet() == null ? null
                 : petRepository.findById(visitDTO.getPet())
                         .orElseThrow(() -> new NotFoundException("pet not found"));
         visit.setPet(pet);
     }
-
 }

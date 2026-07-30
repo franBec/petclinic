@@ -3,6 +3,7 @@ package dev.pollito.petclinic_java_gradle_thymeleaf_tailwind_webpack_htmx_ts.vis
 import dev.pollito.petclinic_java_gradle_thymeleaf_tailwind_webpack_htmx_ts.pet.PetService;
 import dev.pollito.petclinic_java_gradle_thymeleaf_tailwind_webpack_htmx_ts.util.WebUtils;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -15,15 +16,12 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/visits")
+@RequiredArgsConstructor
 public class VisitController {
 
     private final VisitService visitService;
     private final PetService petService;
-
-    public VisitController(final VisitService visitService, final PetService petService) {
-        this.visitService = visitService;
-        this.petService = petService;
-    }
+    private final VisitMapper visitMapper;
 
     @ModelAttribute
     public void prepareContext(final Model model) {
@@ -32,7 +30,7 @@ public class VisitController {
 
     @GetMapping
     public String list(final Model model) {
-        model.addAttribute("visits", visitService.findAll());
+        model.addAttribute("visits", visitService.findAll().stream().map(visitMapper::map).toList());
         return "visit/list";
     }
 
@@ -47,14 +45,14 @@ public class VisitController {
         if (bindingResult.hasErrors()) {
             return "visit/add";
         }
-        visitService.create(visitDTO);
+        visitService.create(visitMapper.map(visitDTO));
         redirectAttributes.addFlashAttribute(WebUtils.MSG_SUCCESS, WebUtils.getMessage("visit.create.success"));
         return "redirect:/visits";
     }
 
     @GetMapping("/edit/{id}")
     public String edit(@PathVariable(name = "id") final Integer id, final Model model) {
-        model.addAttribute("visit", visitService.get(id));
+        model.addAttribute("visit", visitMapper.map(visitService.get(id)));
         return "visit/edit";
     }
 
@@ -65,7 +63,7 @@ public class VisitController {
         if (bindingResult.hasErrors()) {
             return "visit/edit";
         }
-        visitService.update(id, visitDTO);
+        visitService.update(id, visitMapper.map(visitDTO));
         redirectAttributes.addFlashAttribute(WebUtils.MSG_SUCCESS, WebUtils.getMessage("visit.update.success"));
         return "redirect:/visits";
     }
@@ -77,5 +75,4 @@ public class VisitController {
         redirectAttributes.addFlashAttribute(WebUtils.MSG_INFO, WebUtils.getMessage("visit.delete.success"));
         return "redirect:/visits";
     }
-
 }

@@ -5,13 +5,13 @@ import org.springframework.data.domain.Pageable
 
 interface OwnerService {
 
-    fun findAll(filter: String?, pageable: Pageable): Page<OwnerDTO>
+    fun findAll(filter: String?, pageable: Pageable): Page<Owner>
 
-    fun `get`(id: Int): OwnerDTO
+    fun `get`(id: Int): Owner
 
-    fun create(ownerDTO: OwnerDTO): Int
+    fun create(owner: Owner): Int
 
-    fun update(id: Int, ownerDTO: OwnerDTO)
+    fun update(id: Int, owner: Owner)
 
     fun delete(id: Int)
 

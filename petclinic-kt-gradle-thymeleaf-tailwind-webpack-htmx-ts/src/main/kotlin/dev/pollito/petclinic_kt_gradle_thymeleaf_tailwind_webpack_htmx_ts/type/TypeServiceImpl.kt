@@ -11,28 +11,18 @@ import org.springframework.stereotype.Service
 class TypeServiceImpl(
     private val typeRepository: TypeRepository,
     private val publisher: ApplicationEventPublisher,
-    private val typeMapper: TypeMapper,
 ) : TypeService {
 
-    override fun findAll(): List<TypeDTO> {
-        val types = typeRepository.findAll(Sort.by("id"))
-        return types.map { type -> typeMapper.updateTypeDTO(type, TypeDTO()) }
-    }
+    override fun findAll(): List<Type> = typeRepository.findAll(Sort.by("id"))
 
-    override fun `get`(id: Int): TypeDTO = typeRepository.findById(id)
-        .map { type -> typeMapper.updateTypeDTO(type, TypeDTO()) }
+    override fun `get`(id: Int): Type = typeRepository.findById(id)
         .orElseThrow { NotFoundException() }
 
-    override fun create(typeDTO: TypeDTO): Int {
-        val type = Type()
-        typeMapper.updateType(typeDTO, type)
-        return typeRepository.save(type).id!!
-    }
+    override fun create(type: Type): Int = typeRepository.save(type).id!!
 
-    override fun update(id: Int, typeDTO: TypeDTO) {
-        val type = typeRepository.findById(id)
-            .orElseThrow { NotFoundException() }
-        typeMapper.updateType(typeDTO, type)
+    override fun update(id: Int, type: Type) {
+        type.id = id
+        typeRepository.findById(id).orElseThrow { NotFoundException() }
         typeRepository.save(type)
     }
 

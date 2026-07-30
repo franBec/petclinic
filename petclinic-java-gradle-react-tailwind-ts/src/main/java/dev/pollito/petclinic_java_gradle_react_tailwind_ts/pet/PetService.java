@@ -1,21 +1,19 @@
 package dev.pollito.petclinic_java_gradle_react_tailwind_ts.pet;
 
-import dev.pollito.petclinic_java_gradle_react_tailwind_ts.generated.model.PetDTO;
 import java.util.List;
 import java.util.Map;
 
 public interface PetService {
 
-    List<PetDTO> findAll();
+    List<Pet> findAll();
 
-    PetDTO get(Integer id);
+    Pet get(Integer id);
 
-    Integer create(PetDTO petDTO);
+    Integer create(Pet pet);
 
-    void update(Integer id, PetDTO petDTO);
+    void update(Integer id, Pet pet);
 
     void delete(Integer id);
 
     Map<Integer, Integer> getPetValues();
-
 }

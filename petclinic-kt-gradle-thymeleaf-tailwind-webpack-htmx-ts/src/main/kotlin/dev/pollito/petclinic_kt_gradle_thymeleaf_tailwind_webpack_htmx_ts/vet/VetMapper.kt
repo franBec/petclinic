@@ -3,30 +3,27 @@ package dev.pollito.petclinic_kt_gradle_thymeleaf_tailwind_webpack_htmx_ts.vet
 import dev.pollito.petclinic_kt_gradle_thymeleaf_tailwind_webpack_htmx_ts.specialty.SpecialtyRepository
 import dev.pollito.petclinic_kt_gradle_thymeleaf_tailwind_webpack_htmx_ts.util.NotFoundException
 import org.mapstruct.AfterMapping
-import org.mapstruct.Context
 import org.mapstruct.Mapper
 import org.mapstruct.Mapping
 import org.mapstruct.MappingConstants
 import org.mapstruct.MappingTarget
 import org.mapstruct.ReportingPolicy
+import org.springframework.beans.factory.annotation.Autowired
 
 @Mapper(
     componentModel = MappingConstants.ComponentModel.SPRING,
     unmappedTargetPolicy = ReportingPolicy.IGNORE,
 )
-interface VetMapper {
+abstract class VetMapper {
+
+    @Autowired
+    protected lateinit var specialtyRepository: SpecialtyRepository
 
     @Mapping(
         target = "vetSpecialtySpecialties",
-        ignore = true,
+        expression = "java(vet.getVetSpecialtySpecialties() == null ? java.util.List.of() : vet.getVetSpecialtySpecialties().stream().map(specialty -> specialty.getId()).toList())",
     )
-    fun updateVetDTO(vet: Vet, @MappingTarget vetDTO: VetDTO): VetDTO
-
-    @AfterMapping
-    fun afterUpdateVetDTO(vet: Vet, @MappingTarget vetDTO: VetDTO) {
-        vetDTO.vetSpecialtySpecialties = vet.vetSpecialtySpecialties
-            .map { specialty -> specialty.id!! }
-    }
+    abstract fun map(vet: Vet): VetDTO
 
     @Mapping(
         target = "id",
@@ -36,18 +33,10 @@ interface VetMapper {
         target = "vetSpecialtySpecialties",
         ignore = true,
     )
-    fun updateVet(
-        vetDTO: VetDTO,
-        @MappingTarget vet: Vet,
-        @Context specialtyRepository: SpecialtyRepository,
-    ): Vet
+    abstract fun map(vetDTO: VetDTO): Vet
 
     @AfterMapping
-    fun afterUpdateVet(
-        vetDTO: VetDTO,
-        @MappingTarget vet: Vet,
-        @Context specialtyRepository: SpecialtyRepository,
-    ) {
+    protected fun afterMap(vetDTO: VetDTO, @MappingTarget vet: Vet) {
         val vetSpecialtySpecialties = specialtyRepository.findAllById(
             vetDTO.vetSpecialtySpecialties
                 ?: emptyList(),

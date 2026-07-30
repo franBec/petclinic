@@ -18,6 +18,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes
 class VisitController(
     private val visitService: VisitService,
     private val petService: PetService,
+    private val visitMapper: VisitMapper,
 ) {
 
     @ModelAttribute
@@ -27,7 +28,7 @@ class VisitController(
 
     @GetMapping
     fun list(model: Model): String {
-        model.addAttribute("visits", visitService.findAll())
+        model.addAttribute("visits", visitService.findAll().map { visitMapper.map(it) })
         return "visit/list"
     }
 
@@ -43,7 +44,7 @@ class VisitController(
         if (bindingResult.hasErrors()) {
             return "visit/add"
         }
-        visitService.create(visitDTO)
+        visitService.create(visitMapper.map(visitDTO))
         redirectAttributes.addFlashAttribute(
             WebUtils.MSG_SUCCESS,
             WebUtils.getMessage("visit.create.success"),
@@ -53,7 +54,7 @@ class VisitController(
 
     @GetMapping("/edit/{id}")
     fun edit(@PathVariable(name = "id") id: Int, model: Model): String {
-        model.addAttribute("visit", visitService.get(id))
+        model.addAttribute("visit", visitMapper.map(visitService.get(id)))
         return "visit/edit"
     }
 
@@ -67,7 +68,7 @@ class VisitController(
         if (bindingResult.hasErrors()) {
             return "visit/edit"
         }
-        visitService.update(id, visitDTO)
+        visitService.update(id, visitMapper.map(visitDTO))
         redirectAttributes.addFlashAttribute(
             WebUtils.MSG_SUCCESS,
             WebUtils.getMessage("visit.update.success"),

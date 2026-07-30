@@ -5,16 +5,15 @@ import java.util.Map;
 
 public interface SpecialtyService {
 
-    List<SpecialtyDTO> findAll();
+    List<Specialty> findAll();
 
-    SpecialtyDTO get(Integer id);
+    Specialty get(Integer id);
 
-    Integer create(SpecialtyDTO specialtyDTO);
+    Integer create(Specialty specialty);
 
-    void update(Integer id, SpecialtyDTO specialtyDTO);
+    void update(Integer id, Specialty specialty);
 
     void delete(Integer id);
 
     Map<Integer, Integer> getSpecialtyValues();
-
 }

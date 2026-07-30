@@ -2,13 +2,13 @@ package dev.pollito.petclinic_kt_gradle_thymeleaf_tailwind_webpack_htmx_ts.type
 
 interface TypeService {
 
-    fun findAll(): List<TypeDTO>
+    fun findAll(): List<Type>
 
-    fun `get`(id: Int): TypeDTO
+    fun `get`(id: Int): Type
 
-    fun create(typeDTO: TypeDTO): Int
+    fun create(type: Type): Int
 
-    fun update(id: Int, typeDTO: TypeDTO)
+    fun update(id: Int, type: Type)
 
     fun delete(id: Int)
 

@@ -16,11 +16,12 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes
 @RequestMapping("/specialties")
 class SpecialtyController(
     private val specialtyService: SpecialtyService,
+    private val specialtyMapper: SpecialtyMapper,
 ) {
 
     @GetMapping
     fun list(model: Model): String {
-        model.addAttribute("specialties", specialtyService.findAll())
+        model.addAttribute("specialties", specialtyService.findAll().map { specialtyMapper.map(it) })
         return "specialty/list"
     }
 
@@ -36,7 +37,7 @@ class SpecialtyController(
         if (bindingResult.hasErrors()) {
             return "specialty/add"
         }
-        specialtyService.create(specialtyDTO)
+        specialtyService.create(specialtyMapper.map(specialtyDTO))
         redirectAttributes.addFlashAttribute(
             WebUtils.MSG_SUCCESS,
             WebUtils.getMessage("specialty.create.success"),
@@ -46,7 +47,7 @@ class SpecialtyController(
 
     @GetMapping("/edit/{id}")
     fun edit(@PathVariable(name = "id") id: Int, model: Model): String {
-        model.addAttribute("specialty", specialtyService.get(id))
+        model.addAttribute("specialty", specialtyMapper.map(specialtyService.get(id)))
         return "specialty/edit"
     }
 
@@ -60,7 +61,7 @@ class SpecialtyController(
         if (bindingResult.hasErrors()) {
             return "specialty/edit"
         }
-        specialtyService.update(id, specialtyDTO)
+        specialtyService.update(id, specialtyMapper.map(specialtyDTO))
         redirectAttributes.addFlashAttribute(
             WebUtils.MSG_SUCCESS,
             WebUtils.getMessage("specialty.update.success"),

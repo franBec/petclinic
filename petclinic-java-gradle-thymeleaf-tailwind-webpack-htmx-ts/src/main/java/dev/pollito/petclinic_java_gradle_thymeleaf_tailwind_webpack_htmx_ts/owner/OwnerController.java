@@ -3,6 +3,7 @@ package dev.pollito.petclinic_java_gradle_thymeleaf_tailwind_webpack_htmx_ts.own
 import dev.pollito.petclinic_java_gradle_thymeleaf_tailwind_webpack_htmx_ts.util.ReferencedException;
 import dev.pollito.petclinic_java_gradle_thymeleaf_tailwind_webpack_htmx_ts.util.WebUtils;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -20,20 +21,18 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/owners")
+@RequiredArgsConstructor
 public class OwnerController {
 
     private final OwnerService ownerService;
-
-    public OwnerController(final OwnerService ownerService) {
-        this.ownerService = ownerService;
-    }
+    private final OwnerMapper ownerMapper;
 
     @GetMapping
     public String list(@RequestParam(name = "filter", required = false) final String filter,
             @SortDefault(sort = "id") @PageableDefault(size = 20) final Pageable pageable,
             final Model model) {
-        final Page<OwnerDTO> owners = ownerService.findAll(filter, pageable);
-        model.addAttribute("owners", owners);
+        final Page<Owner> owners = ownerService.findAll(filter, pageable);
+        model.addAttribute("owners", owners.map(ownerMapper::map));
         model.addAttribute("filter", filter);
         model.addAttribute("paginationModel", WebUtils.getPaginationModel(owners));
         return "owner/list";
@@ -50,14 +49,14 @@ public class OwnerController {
         if (bindingResult.hasErrors()) {
             return "owner/add";
         }
-        ownerService.create(ownerDTO);
+        ownerService.create(ownerMapper.map(ownerDTO));
         redirectAttributes.addFlashAttribute(WebUtils.MSG_SUCCESS, WebUtils.getMessage("owner.create.success"));
         return "redirect:/owners";
     }
 
     @GetMapping("/edit/{id}")
     public String edit(@PathVariable(name = "id") final Integer id, final Model model) {
-        model.addAttribute("owner", ownerService.get(id));
+        model.addAttribute("owner", ownerMapper.map(ownerService.get(id)));
         return "owner/edit";
     }
 
@@ -68,7 +67,7 @@ public class OwnerController {
         if (bindingResult.hasErrors()) {
             return "owner/edit";
         }
-        ownerService.update(id, ownerDTO);
+        ownerService.update(id, ownerMapper.map(ownerDTO));
         redirectAttributes.addFlashAttribute(WebUtils.MSG_SUCCESS, WebUtils.getMessage("owner.update.success"));
         return "redirect:/owners";
     }
@@ -85,5 +84,4 @@ public class OwnerController {
         }
         return "redirect:/owners";
     }
-
 }

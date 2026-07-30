@@ -4,14 +4,13 @@ import java.util.List;
 
 public interface VisitService {
 
-    List<VisitDTO> findAll();
+    List<Visit> findAll();
 
-    VisitDTO get(Integer id);
+    Visit get(Integer id);
 
-    Integer create(VisitDTO visitDTO);
+    Integer create(Visit visit);
 
-    void update(Integer id, VisitDTO visitDTO);
+    void update(Integer id, Visit visit);
 
     void delete(Integer id);
-
 }

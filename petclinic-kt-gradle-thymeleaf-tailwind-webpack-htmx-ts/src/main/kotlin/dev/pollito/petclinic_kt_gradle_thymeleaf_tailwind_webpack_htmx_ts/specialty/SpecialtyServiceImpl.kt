@@ -13,33 +13,18 @@ import org.springframework.transaction.annotation.Transactional
 class SpecialtyServiceImpl(
     private val specialtyRepository: SpecialtyRepository,
     private val publisher: ApplicationEventPublisher,
-    private val specialtyMapper: SpecialtyMapper,
 ) : SpecialtyService {
 
-    override fun findAll(): List<SpecialtyDTO> {
-        val specialties = specialtyRepository.findAll(Sort.by("id"))
-        return specialties.map { specialty ->
-            specialtyMapper.updateSpecialtyDTO(
-                specialty,
-                SpecialtyDTO(),
-            )
-        }
-    }
+    override fun findAll(): List<Specialty> = specialtyRepository.findAll(Sort.by("id"))
 
-    override fun `get`(id: Int): SpecialtyDTO = specialtyRepository.findById(id)
-        .map { specialty -> specialtyMapper.updateSpecialtyDTO(specialty, SpecialtyDTO()) }
+    override fun `get`(id: Int): Specialty = specialtyRepository.findById(id)
         .orElseThrow { NotFoundException() }
 
-    override fun create(specialtyDTO: SpecialtyDTO): Int {
-        val specialty = Specialty()
-        specialtyMapper.updateSpecialty(specialtyDTO, specialty)
-        return specialtyRepository.save(specialty).id!!
-    }
+    override fun create(specialty: Specialty): Int = specialtyRepository.save(specialty).id!!
 
-    override fun update(id: Int, specialtyDTO: SpecialtyDTO) {
-        val specialty = specialtyRepository.findById(id)
-            .orElseThrow { NotFoundException() }
-        specialtyMapper.updateSpecialty(specialtyDTO, specialty)
+    override fun update(id: Int, specialty: Specialty) {
+        specialty.id = id
+        specialtyRepository.findById(id).orElseThrow { NotFoundException() }
         specialtyRepository.save(specialty)
     }
 

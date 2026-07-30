@@ -1,21 +1,19 @@
 package dev.pollito.petclinic_java_gradle_react_tailwind_ts.specialty;
 
-import dev.pollito.petclinic_java_gradle_react_tailwind_ts.generated.model.SpecialtyDTO;
 import java.util.List;
 import java.util.Map;
 
 public interface SpecialtyService {
 
-    List<SpecialtyDTO> findAll();
+    List<Specialty> findAll();
 
-    SpecialtyDTO get(Integer id);
+    Specialty get(Integer id);
 
-    Integer create(SpecialtyDTO specialtyDTO);
+    Integer create(Specialty specialty);
 
-    void update(Integer id, SpecialtyDTO specialtyDTO);
+    void update(Integer id, Specialty specialty);
 
     void delete(Integer id);
 
     Map<Integer, Integer> getSpecialtyValues();
-
 }

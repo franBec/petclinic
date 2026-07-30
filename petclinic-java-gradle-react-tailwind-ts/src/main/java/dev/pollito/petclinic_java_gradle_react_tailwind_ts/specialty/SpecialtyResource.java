@@ -9,21 +9,18 @@ import dev.pollito.petclinic_java_gradle_react_tailwind_ts.generated.model.Speci
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import java.time.OffsetDateTime;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@RequiredArgsConstructor
 public class SpecialtyResource implements SpecialtyApi {
 
     private final SpecialtyService specialtyService;
+    private final SpecialtyMapper specialtyMapper;
     private final HttpServletRequest request;
-
-    public SpecialtyResource(
-            final SpecialtyService specialtyService, final HttpServletRequest request) {
-        this.specialtyService = specialtyService;
-        this.request = request;
-    }
 
     @Override
     public ResponseEntity<SpecialtyListResponse> getAllSpecialties() {
@@ -33,7 +30,7 @@ public class SpecialtyResource implements SpecialtyApi {
                         .status(HttpStatus.OK.value())
                         .timestamp(OffsetDateTime.now())
                         .trace("")
-                        .data(specialtyService.findAll()));
+                        .data(specialtyService.findAll().stream().map(specialtyMapper::map).toList()));
     }
 
     @Override
@@ -44,13 +41,13 @@ public class SpecialtyResource implements SpecialtyApi {
                         .status(HttpStatus.OK.value())
                         .timestamp(OffsetDateTime.now())
                         .trace("")
-                        .data(specialtyService.get(id)));
+                        .data(specialtyMapper.map(specialtyService.get(id))));
     }
 
     @Override
     public ResponseEntity<SpecialtyCreateResponse> createSpecialty(
             @Valid final SpecialtyDTO specialtyDTO) {
-        Integer createdId = specialtyService.create(specialtyDTO);
+        Integer createdId = specialtyService.create(specialtyMapper.map(specialtyDTO));
         return new ResponseEntity<>(
                 new SpecialtyCreateResponse()
                         .instance(request.getRequestURI())
@@ -64,7 +61,7 @@ public class SpecialtyResource implements SpecialtyApi {
     @Override
     public ResponseEntity<SpecialtyUpdateResponse> updateSpecialty(
             final Integer id, @Valid final SpecialtyDTO specialtyDTO) {
-        specialtyService.update(id, specialtyDTO);
+        specialtyService.update(id, specialtyMapper.map(specialtyDTO));
         return ResponseEntity.ok(
                 new SpecialtyUpdateResponse()
                         .instance(request.getRequestURI())

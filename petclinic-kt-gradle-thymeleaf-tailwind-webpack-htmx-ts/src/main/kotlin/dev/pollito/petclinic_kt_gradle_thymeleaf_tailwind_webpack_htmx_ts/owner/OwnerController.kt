@@ -21,6 +21,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes
 @RequestMapping("/owners")
 class OwnerController(
     private val ownerService: OwnerService,
+    private val ownerMapper: OwnerMapper,
 ) {
 
     @GetMapping
@@ -30,7 +31,7 @@ class OwnerController(
         model: Model,
     ): String {
         val owners = ownerService.findAll(filter, pageable)
-        model.addAttribute("owners", owners)
+        model.addAttribute("owners", owners.map { ownerMapper.map(it) })
         model.addAttribute("filter", filter)
         model.addAttribute("paginationModel", WebUtils.getPaginationModel(owners))
         return "owner/list"
@@ -48,7 +49,7 @@ class OwnerController(
         if (bindingResult.hasErrors()) {
             return "owner/add"
         }
-        ownerService.create(ownerDTO)
+        ownerService.create(ownerMapper.map(ownerDTO))
         redirectAttributes.addFlashAttribute(
             WebUtils.MSG_SUCCESS,
             WebUtils.getMessage("owner.create.success"),
@@ -58,7 +59,7 @@ class OwnerController(
 
     @GetMapping("/edit/{id}")
     fun edit(@PathVariable(name = "id") id: Int, model: Model): String {
-        model.addAttribute("owner", ownerService.get(id))
+        model.addAttribute("owner", ownerMapper.map(ownerService.get(id)))
         return "owner/edit"
     }
 
@@ -72,7 +73,7 @@ class OwnerController(
         if (bindingResult.hasErrors()) {
             return "owner/edit"
         }
-        ownerService.update(id, ownerDTO)
+        ownerService.update(id, ownerMapper.map(ownerDTO))
         redirectAttributes.addFlashAttribute(
             WebUtils.MSG_SUCCESS,
             WebUtils.getMessage("owner.update.success"),

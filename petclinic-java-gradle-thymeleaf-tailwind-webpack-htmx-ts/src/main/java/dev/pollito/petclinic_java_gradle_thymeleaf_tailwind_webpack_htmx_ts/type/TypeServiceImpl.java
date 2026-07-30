@@ -5,51 +5,38 @@ import dev.pollito.petclinic_java_gradle_thymeleaf_tailwind_webpack_htmx_ts.util
 import dev.pollito.petclinic_java_gradle_thymeleaf_tailwind_webpack_htmx_ts.util.NotFoundException;
 import java.util.List;
 import java.util.Map;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class TypeServiceImpl implements TypeService {
 
     private final TypeRepository typeRepository;
     private final ApplicationEventPublisher publisher;
-    private final TypeMapper typeMapper;
 
-    public TypeServiceImpl(final TypeRepository typeRepository,
-            final ApplicationEventPublisher publisher, final TypeMapper typeMapper) {
-        this.typeRepository = typeRepository;
-        this.publisher = publisher;
-        this.typeMapper = typeMapper;
+    @Override
+    public List<Type> findAll() {
+        return typeRepository.findAll(Sort.by("id"));
     }
 
     @Override
-    public List<TypeDTO> findAll() {
-        final List<Type> types = typeRepository.findAll(Sort.by("id"));
-        return types.stream()
-                .map(type -> typeMapper.updateTypeDTO(type, new TypeDTO()))
-                .toList();
-    }
-
-    @Override
-    public TypeDTO get(final Integer id) {
+    public Type get(final Integer id) {
         return typeRepository.findById(id)
-                .map(type -> typeMapper.updateTypeDTO(type, new TypeDTO()))
                 .orElseThrow(NotFoundException::new);
     }
 
     @Override
-    public Integer create(final TypeDTO typeDTO) {
-        final Type type = new Type();
-        typeMapper.updateType(typeDTO, type);
+    public Integer create(final Type type) {
         return typeRepository.save(type).getId();
     }
 
     @Override
-    public void update(final Integer id, final TypeDTO typeDTO) {
-        final Type type = typeRepository.findById(id)
-                .orElseThrow(NotFoundException::new);
-        typeMapper.updateType(typeDTO, type);
+    public void update(final Integer id, final Type type) {
+        type.setId(id);
+        typeRepository.findById(id).orElseThrow(NotFoundException::new);
         typeRepository.save(type);
     }
 
@@ -67,5 +54,4 @@ public class TypeServiceImpl implements TypeService {
                 .stream()
                 .collect(CustomCollectors.toSortedMap(Type::getId, Type::getId));
     }
-
 }
