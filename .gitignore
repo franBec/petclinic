@@ -1,3 +1,4 @@
 .env
 .gradle/
 package-lock.json
+*.hprof

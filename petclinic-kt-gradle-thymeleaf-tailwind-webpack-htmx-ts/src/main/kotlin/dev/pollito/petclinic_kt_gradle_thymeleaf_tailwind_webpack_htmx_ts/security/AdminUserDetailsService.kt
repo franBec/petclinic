@@ -21,11 +21,13 @@ class AdminUserDetailsService(
             log.warn("user not found: {}", username)
             throw UsernameNotFoundException("User $username not found")
         }
-        val role = UserRoles.ROLE_UNKNOWN
-        val authorities = listOf(SimpleGrantedAuthority(role))
+
         return User.withUsername(username)
             .password(user.password)
-            .authorities(authorities)
+            .authorities(
+                user.usernameUserRoles
+                    .map { SimpleGrantedAuthority(it.role!!.name!!) },
+            )
             .build()
     }
 

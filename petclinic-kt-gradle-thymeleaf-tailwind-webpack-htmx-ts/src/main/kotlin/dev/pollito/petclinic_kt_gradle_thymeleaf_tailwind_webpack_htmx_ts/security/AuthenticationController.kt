@@ -13,6 +13,7 @@ class AuthenticationController {
     fun login(
         @RequestParam(name = "loginRequired", defaultValue = "false") loginRequired: Boolean,
         @RequestParam(name = "loginError", defaultValue = "false") loginError: Boolean,
+        @RequestParam(name = "logout", defaultValue = "false") logout: Boolean,
         model: Model,
     ): String {
         // dummy for using the inputRow fragment
@@ -27,6 +28,12 @@ class AuthenticationController {
             model.addAttribute(
                 WebUtils.MSG_ERROR,
                 WebUtils.getMessage("authentication.login.error"),
+            )
+        }
+        if (logout) {
+            model.addAttribute(
+                WebUtils.MSG_INFO,
+                WebUtils.getMessage("authentication.logout.success"),
             )
         }
         return "authentication/login"
