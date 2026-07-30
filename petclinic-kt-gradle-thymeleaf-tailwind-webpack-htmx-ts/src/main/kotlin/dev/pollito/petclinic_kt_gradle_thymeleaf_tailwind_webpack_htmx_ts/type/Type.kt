@@ -8,10 +8,12 @@ import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.OneToMany
 import jakarta.persistence.SequenceGenerator
+import jakarta.persistence.Table
 import java.time.OffsetDateTime
 
 
 @Entity
+@Table(name = "types")
 class Type {
 
     @Id
@@ -19,16 +21,7 @@ class Type {
         nullable = false,
         updatable = false
     )
-    @SequenceGenerator(
-        name = "primary_sequence",
-        sequenceName = "primary_sequence",
-        allocationSize = 1,
-        initialValue = 10000
-    )
-    @GeneratedValue(
-        strategy = GenerationType.SEQUENCE,
-        generator = "primary_sequence"
-    )
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Int? = null
 
     @Column(

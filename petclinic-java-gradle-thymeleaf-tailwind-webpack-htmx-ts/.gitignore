@@ -8,6 +8,7 @@ application-local.yml
 *.log
 .DS_Store
 node_modules/
+.env
 
 ## IntelliJ IDEA
 .idea

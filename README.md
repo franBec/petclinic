@@ -1,6 +1,6 @@
 # Petclinic
 
-This repository implements the classic [Spring Petclinic](https://github.com/spring-projects/spring-petclinic) application across multiple tech stacks — all sharing a single PostgreSQL database managed via [Flyway](https://flywaydb.org/) migrations. The client projects are **work in progress**: they have been generated from [bootify.io](https://bootify.io) but are not yet wired to this database and have not been tested.
+This repository implements the classic [Spring Petclinic](https://github.com/spring-projects/spring-petclinic) application across multiple tech stacks — all sharing a single PostgreSQL database managed via [Flyway](https://flywaydb.org/) migrations.
 
 ## Quick Start
 
@@ -58,19 +58,19 @@ petclinic/
 ├── docs/                                         # Documentation assets (ER diagram, etc.)
 ├── .env                                          # Shared environment variables
 ├── docker-compose.yml
-├── petclinic-java-gradle-react-tailwind-ts/      # Generated via bootify.io — nothing wired, nothing tested
-├── petclinic-java-gradle-thymeleaf-tailwind-webpack-htmx-ts/  # Generated via bootify.io — nothing wired, nothing tested
-├── petclinic-kt-gradle-thymeleaf-tailwind-webpack-htmx-ts/    # Generated via bootify.io — nothing wired, nothing tested
+├── petclinic-java-gradle-react-tailwind-ts/      # Java + React + Tailwind CSS + TypeScript
+├── petclinic-java-gradle-thymeleaf-tailwind-webpack-htmx-ts/  # Java + Thymeleaf + HTMX + Tailwind CSS + TypeScript
+├── petclinic-kt-gradle-thymeleaf-tailwind-webpack-htmx-ts/    # Kotlin + Thymeleaf + HTMX + Tailwind CSS + TypeScript
 └── README.md
 ```
 
-| Directory | Language | Frontend |
-|---|---|---|
-| `petclinic-java-gradle-react-tailwind-ts` | Java (Gradle) | React + Tailwind CSS + TypeScript |
-| `petclinic-java-gradle-thymeleaf-tailwind-webpack-htmx-ts` | Java (Gradle) | Thymeleaf + HTMX + Tailwind CSS + TypeScript |
-| `petclinic-kt-gradle-thymeleaf-tailwind-webpack-htmx-ts` | Kotlin (Gradle) | Thymeleaf + HTMX + Tailwind CSS + TypeScript |
+| Directory | Language | Frontend | Run |
+|---|---|---|---|
+| `petclinic-java-gradle-react-tailwind-ts` | Java (Gradle) | React + Tailwind CSS + TypeScript | `cd petclinic-java-gradle-react-tailwind-ts && ./gradlew bootRun` |
+| `petclinic-java-gradle-thymeleaf-tailwind-webpack-htmx-ts` | Java (Gradle) | Thymeleaf + HTMX + Tailwind CSS + TypeScript | `cd petclinic-java-gradle-thymeleaf-tailwind-webpack-htmx-ts && ./gradlew bootRun` |
+| `petclinic-kt-gradle-thymeleaf-tailwind-webpack-htmx-ts` | Kotlin (Gradle) | Thymeleaf + HTMX + Tailwind CSS + TypeScript | `cd petclinic-kt-gradle-thymeleaf-tailwind-webpack-htmx-ts && ./gradlew bootRun` |
 
-All applications connect to the database at `localhost:5432`.
+All applications connect to the database at `localhost:5432` on port `8080`. Each project loads database credentials from its own `.env` file — copy the `.env.example` to `.env` for a working setup.
 
 ## Schema Design & Decisions
 

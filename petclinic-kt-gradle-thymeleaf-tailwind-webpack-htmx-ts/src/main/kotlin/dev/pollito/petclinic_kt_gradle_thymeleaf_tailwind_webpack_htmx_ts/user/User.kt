@@ -14,7 +14,7 @@ import java.time.OffsetDateTime
 
 
 @Entity
-@Table(name = "\"user\"")
+@Table(name = "users")
 class User {
 
     @Id

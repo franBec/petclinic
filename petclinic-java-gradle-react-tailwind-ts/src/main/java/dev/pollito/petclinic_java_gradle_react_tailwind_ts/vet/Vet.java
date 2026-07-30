@@ -6,6 +6,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
@@ -18,21 +19,15 @@ import lombok.Setter;
 
 
 @Entity
+@Table(name = "vets")
 @Getter
 @Setter
 public class Vet {
 
     @Id
     @Column(nullable = false, updatable = false)
-    @SequenceGenerator(
-            name = "primary_sequence",
-            sequenceName = "primary_sequence",
-            allocationSize = 1,
-            initialValue = 10000
-    )
     @GeneratedValue(
-            strategy = GenerationType.SEQUENCE,
-            generator = "primary_sequence"
+            strategy = GenerationType.IDENTITY
     )
     private Integer id;
 
@@ -53,9 +48,9 @@ public class Vet {
 
     @ManyToMany
     @JoinTable(
-            name = "VetSpecialty",
-            joinColumns = @JoinColumn(name = "vetId"),
-            inverseJoinColumns = @JoinColumn(name = "specialtyId")
+            name = "vet_specialties",
+            joinColumns = @JoinColumn(name = "vet_id"),
+            inverseJoinColumns = @JoinColumn(name = "specialty_id")
     )
     private Set<Specialty> vetSpecialtySpecialties = new HashSet<>();
 

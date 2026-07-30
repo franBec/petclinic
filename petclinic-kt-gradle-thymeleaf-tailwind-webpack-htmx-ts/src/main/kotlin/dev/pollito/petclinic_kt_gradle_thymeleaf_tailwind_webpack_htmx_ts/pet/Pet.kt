@@ -13,11 +13,13 @@ import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.OneToMany
 import jakarta.persistence.SequenceGenerator
+import jakarta.persistence.Table
 import java.time.LocalDate
 import java.time.OffsetDateTime
 
 
 @Entity
+@Table(name = "pets")
 class Pet {
 
     @Id
@@ -25,16 +27,7 @@ class Pet {
         nullable = false,
         updatable = false
     )
-    @SequenceGenerator(
-        name = "primary_sequence",
-        sequenceName = "primary_sequence",
-        allocationSize = 1,
-        initialValue = 10000
-    )
-    @GeneratedValue(
-        strategy = GenerationType.SEQUENCE,
-        generator = "primary_sequence"
-    )
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Int? = null
 
     @Column(

@@ -1,8 +1,10 @@
 spring:
+  config:
+    import: optional:file:.env
   datasource:
-    url: ${JDBC_DATABASE_URL:jdbc:postgresql://localhost:5432/petclinic-java-gradle-react-tailwind-ts}
-    username: ${JDBC_DATABASE_USERNAME:postgres}
-    password: ${JDBC_DATABASE_PASSWORD:<<YOUR_PASSWORD>>}
+    url: ${JDBC_DATABASE_URL:jdbc:postgresql://localhost:5432/petclinic}
+    username: ${JDBC_DATABASE_USERNAME:petclinic}
+    password: ${JDBC_DATABASE_PASSWORD:petclinic}
     hikari:
       connection-timeout: 30000
       maximum-pool-size: 10

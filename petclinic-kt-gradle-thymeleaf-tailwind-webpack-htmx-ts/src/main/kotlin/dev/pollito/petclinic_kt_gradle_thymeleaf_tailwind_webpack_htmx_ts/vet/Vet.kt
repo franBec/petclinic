@@ -10,10 +10,12 @@ import jakarta.persistence.JoinColumn
 import jakarta.persistence.JoinTable
 import jakarta.persistence.ManyToMany
 import jakarta.persistence.SequenceGenerator
+import jakarta.persistence.Table
 import java.time.OffsetDateTime
 
 
 @Entity
+@Table(name = "vets")
 class Vet {
 
     @Id
@@ -21,16 +23,7 @@ class Vet {
         nullable = false,
         updatable = false
     )
-    @SequenceGenerator(
-        name = "primary_sequence",
-        sequenceName = "primary_sequence",
-        allocationSize = 1,
-        initialValue = 10000
-    )
-    @GeneratedValue(
-        strategy = GenerationType.SEQUENCE,
-        generator = "primary_sequence"
-    )
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Int? = null
 
     @Column(
@@ -56,12 +49,12 @@ class Vet {
 
     @ManyToMany
     @JoinTable(
-        name = "VetSpecialty",
+        name = "vet_specialties",
         joinColumns = [
-            JoinColumn(name = "vetId")
+            JoinColumn(name = "vet_id")
         ],
         inverseJoinColumns = [
-            JoinColumn(name = "specialtyId")
+            JoinColumn(name = "specialty_id")
         ]
     )
     var vetSpecialtySpecialties = mutableSetOf<Specialty>()
