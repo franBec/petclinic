@@ -1,0 +1,1383 @@
+openapi: 3.0.3
+info:
+  title: Petclinic API
+  version: 1.0.0
+  description: REST API for the Petclinic application
+
+servers:
+  - url: '{openapi.petclinic.base-path:}'
+    variables:
+      openapi.petclinic.base-path:
+        default: ""
+
+tags:
+  - name: Owner
+  - name: Pet
+  - name: Vet
+  - name: Type
+  - name: Visit
+  - name: Specialty
+  - name: Authentication
+
+paths:
+  /api/owners:
+    get:
+      tags:
+        - Owner
+      operationId: getAllOwners
+      x-spring-paginated: true
+      parameters:
+        - name: filter
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OwnerListResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+    post:
+      tags:
+        - Owner
+      operationId: createOwner
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OwnerDTO'
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OwnerCreateResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /api/owners/{id}:
+    get:
+      tags:
+        - Owner
+      operationId: getOwner
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OwnerGetResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+    put:
+      tags:
+        - Owner
+      operationId: updateOwner
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OwnerDTO'
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OwnerUpdateResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+    delete:
+      tags:
+        - Owner
+      operationId: deleteOwner
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: No Content
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+
+  /api/pets:
+    get:
+      tags:
+        - Pet
+      operationId: getAllPets
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PetListResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+    post:
+      tags:
+        - Pet
+      operationId: createPet
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PetDTO'
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PetCreateResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /api/pets/{id}:
+    get:
+      tags:
+        - Pet
+      operationId: getPet
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PetGetResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+    put:
+      tags:
+        - Pet
+      operationId: updatePet
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PetDTO'
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PetUpdateResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+    delete:
+      tags:
+        - Pet
+      operationId: deletePet
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: No Content
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+
+  /api/vets:
+    get:
+      tags:
+        - Vet
+      operationId: getAllVets
+      x-spring-paginated: true
+      parameters:
+        - name: filter
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VetListResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+    post:
+      tags:
+        - Vet
+      operationId: createVet
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VetDTO'
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VetCreateResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /api/vets/{id}:
+    get:
+      tags:
+        - Vet
+      operationId: getVet
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VetGetResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+    put:
+      tags:
+        - Vet
+      operationId: updateVet
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VetDTO'
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VetUpdateResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+    delete:
+      tags:
+        - Vet
+      operationId: deleteVet
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: No Content
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+
+  /api/types:
+    get:
+      tags:
+        - Type
+      operationId: getAllTypes
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TypeListResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+    post:
+      tags:
+        - Type
+      operationId: createType
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TypeDTO'
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TypeCreateResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /api/types/{id}:
+    get:
+      tags:
+        - Type
+      operationId: getType
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TypeGetResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+    put:
+      tags:
+        - Type
+      operationId: updateType
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TypeDTO'
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TypeUpdateResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+    delete:
+      tags:
+        - Type
+      operationId: deleteType
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: No Content
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+
+  /api/visits:
+    get:
+      tags:
+        - Visit
+      operationId: getAllVisits
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VisitListResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+    post:
+      tags:
+        - Visit
+      operationId: createVisit
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VisitDTO'
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VisitCreateResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /api/visits/{id}:
+    get:
+      tags:
+        - Visit
+      operationId: getVisit
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VisitGetResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+    put:
+      tags:
+        - Visit
+      operationId: updateVisit
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VisitDTO'
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VisitUpdateResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+    delete:
+      tags:
+        - Visit
+      operationId: deleteVisit
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: No Content
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+
+  /api/specialties:
+    get:
+      tags:
+        - Specialty
+      operationId: getAllSpecialties
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SpecialtyListResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+    post:
+      tags:
+        - Specialty
+      operationId: createSpecialty
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SpecialtyDTO'
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SpecialtyCreateResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /api/specialties/{id}:
+    get:
+      tags:
+        - Specialty
+      operationId: getSpecialty
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SpecialtyGetResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+    put:
+      tags:
+        - Specialty
+      operationId: updateSpecialty
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SpecialtyDTO'
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SpecialtyUpdateResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+    delete:
+      tags:
+        - Specialty
+      operationId: deleteSpecialty
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: No Content
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+
+  /authenticate:
+    post:
+      tags:
+        - Authentication
+      operationId: authenticate
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthenticationRequest'
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthenticationGetResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+
+components:
+  responses:
+    ErrorResponse:
+      description: Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+  schemas:
+    # ---------------------------------------------------------------------------
+    # Envelope base
+    # ---------------------------------------------------------------------------
+    Pageable:
+      type: object
+      properties:
+        page:
+          type: integer
+        size:
+          type: integer
+        sort:
+          type: array
+          items:
+            type: string
+
+    Page:
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            type: object
+        page:
+          type: integer
+        size:
+          type: integer
+        totalElements:
+          type: integer
+          format: int64
+        totalPages:
+          type: integer
+
+    Error:
+      x-implements:
+        - dev.pollito.petclinic_java_gradle_react_tailwind_ts.util.metadata.ResponseMetadata
+      type: object
+      properties:
+        instance:
+          type: string
+        status:
+          type: integer
+        timestamp:
+          type: string
+          format: date-time
+        trace:
+          type: string
+        error:
+          type: string
+
+    # ---------------------------------------------------------------------------
+    # Owner
+    # ---------------------------------------------------------------------------
+    OwnerDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+        firstName:
+          type: string
+        lastName:
+          type: string
+        address:
+          type: string
+        city:
+          type: string
+        telephone:
+          type: string
+        email:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        deletedAt:
+          type: string
+          format: date-time
+          nullable: true
+      required:
+        - firstName
+        - lastName
+        - address
+        - city
+        - telephone
+        - email
+        - createdAt
+        - updatedAt
+
+    OwnerListData:
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/OwnerDTO'
+        page:
+          type: integer
+        size:
+          type: integer
+        totalElements:
+          type: integer
+          format: int64
+        totalPages:
+          type: integer
+
+    OwnerListResponse:
+      x-implements:
+        - dev.pollito.petclinic_java_gradle_react_tailwind_ts.util.metadata.ResponseMetadata
+      type: object
+      properties:
+        instance:
+          type: string
+        status:
+          type: integer
+        timestamp:
+          type: string
+          format: date-time
+        trace:
+          type: string
+        data:
+          $ref: '#/components/schemas/OwnerListData'
+
+    OwnerGetResponse:
+      x-implements:
+        - dev.pollito.petclinic_java_gradle_react_tailwind_ts.util.metadata.ResponseMetadata
+      type: object
+      properties:
+        instance:
+          type: string
+        status:
+          type: integer
+        timestamp:
+          type: string
+          format: date-time
+        trace:
+          type: string
+        data:
+          $ref: '#/components/schemas/OwnerDTO'
+
+    OwnerCreateResponse:
+      x-implements:
+        - dev.pollito.petclinic_java_gradle_react_tailwind_ts.util.metadata.ResponseMetadata
+      type: object
+      properties:
+        instance:
+          type: string
+        status:
+          type: integer
+        timestamp:
+          type: string
+          format: date-time
+        trace:
+          type: string
+        data:
+          type: integer
+
+    OwnerUpdateResponse:
+      x-implements:
+        - dev.pollito.petclinic_java_gradle_react_tailwind_ts.util.metadata.ResponseMetadata
+      type: object
+      properties:
+        instance:
+          type: string
+        status:
+          type: integer
+        timestamp:
+          type: string
+          format: date-time
+        trace:
+          type: string
+        data:
+          type: integer
+
+    # ---------------------------------------------------------------------------
+    # Pet
+    # ---------------------------------------------------------------------------
+    PetDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        birthDate:
+          type: string
+          format: date
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        deletedAt:
+          type: string
+          format: date-time
+          nullable: true
+        type:
+          type: integer
+        owner:
+          type: integer
+      required:
+        - name
+        - birthDate
+        - createdAt
+        - updatedAt
+        - type
+        - owner
+
+    PetListData:
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/PetDTO'
+
+    PetListResponse:
+      x-implements:
+        - dev.pollito.petclinic_java_gradle_react_tailwind_ts.util.metadata.ResponseMetadata
+      type: object
+      properties:
+        instance:
+          type: string
+        status:
+          type: integer
+        timestamp:
+          type: string
+          format: date-time
+        trace:
+          type: string
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/PetDTO'
+
+    PetGetResponse:
+      x-implements:
+        - dev.pollito.petclinic_java_gradle_react_tailwind_ts.util.metadata.ResponseMetadata
+      type: object
+      properties:
+        instance:
+          type: string
+        status:
+          type: integer
+        timestamp:
+          type: string
+          format: date-time
+        trace:
+          type: string
+        data:
+          $ref: '#/components/schemas/PetDTO'
+
+    PetCreateResponse:
+      x-implements:
+        - dev.pollito.petclinic_java_gradle_react_tailwind_ts.util.metadata.ResponseMetadata
+      type: object
+      properties:
+        instance:
+          type: string
+        status:
+          type: integer
+        timestamp:
+          type: string
+          format: date-time
+        trace:
+          type: string
+        data:
+          type: integer
+
+    PetUpdateResponse:
+      x-implements:
+        - dev.pollito.petclinic_java_gradle_react_tailwind_ts.util.metadata.ResponseMetadata
+      type: object
+      properties:
+        instance:
+          type: string
+        status:
+          type: integer
+        timestamp:
+          type: string
+          format: date-time
+        trace:
+          type: string
+        data:
+          type: integer
+
+    # ---------------------------------------------------------------------------
+    # Vet
+    # ---------------------------------------------------------------------------
+    VetDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+        firstName:
+          type: string
+        lastName:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        deletedAt:
+          type: string
+          format: date-time
+          nullable: true
+        vetSpecialtySpecialties:
+          type: array
+          items:
+            type: integer
+      required:
+        - firstName
+        - lastName
+        - createdAt
+        - updatedAt
+
+    VetListData:
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/VetDTO'
+        page:
+          type: integer
+        size:
+          type: integer
+        totalElements:
+          type: integer
+          format: int64
+        totalPages:
+          type: integer
+
+    VetListResponse:
+      x-implements:
+        - dev.pollito.petclinic_java_gradle_react_tailwind_ts.util.metadata.ResponseMetadata
+      type: object
+      properties:
+        instance:
+          type: string
+        status:
+          type: integer
+        timestamp:
+          type: string
+          format: date-time
+        trace:
+          type: string
+        data:
+          $ref: '#/components/schemas/VetListData'
+
+    VetGetResponse:
+      x-implements:
+        - dev.pollito.petclinic_java_gradle_react_tailwind_ts.util.metadata.ResponseMetadata
+      type: object
+      properties:
+        instance:
+          type: string
+        status:
+          type: integer
+        timestamp:
+          type: string
+          format: date-time
+        trace:
+          type: string
+        data:
+          $ref: '#/components/schemas/VetDTO'
+
+    VetCreateResponse:
+      x-implements:
+        - dev.pollito.petclinic_java_gradle_react_tailwind_ts.util.metadata.ResponseMetadata
+      type: object
+      properties:
+        instance:
+          type: string
+        status:
+          type: integer
+        timestamp:
+          type: string
+          format: date-time
+        trace:
+          type: string
+        data:
+          type: integer
+
+    VetUpdateResponse:
+      x-implements:
+        - dev.pollito.petclinic_java_gradle_react_tailwind_ts.util.metadata.ResponseMetadata
+      type: object
+      properties:
+        instance:
+          type: string
+        status:
+          type: integer
+        timestamp:
+          type: string
+          format: date-time
+        trace:
+          type: string
+        data:
+          type: integer
+
+    # ---------------------------------------------------------------------------
+    # Type
+    # ---------------------------------------------------------------------------
+    TypeDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        deletedAt:
+          type: string
+          format: date-time
+          nullable: true
+      required:
+        - name
+        - createdAt
+        - updatedAt
+
+    TypeListData:
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/TypeDTO'
+
+    TypeListResponse:
+      x-implements:
+        - dev.pollito.petclinic_java_gradle_react_tailwind_ts.util.metadata.ResponseMetadata
+      type: object
+      properties:
+        instance:
+          type: string
+        status:
+          type: integer
+        timestamp:
+          type: string
+          format: date-time
+        trace:
+          type: string
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/TypeDTO'
+
+    TypeGetResponse:
+      x-implements:
+        - dev.pollito.petclinic_java_gradle_react_tailwind_ts.util.metadata.ResponseMetadata
+      type: object
+      properties:
+        instance:
+          type: string
+        status:
+          type: integer
+        timestamp:
+          type: string
+          format: date-time
+        trace:
+          type: string
+        data:
+          $ref: '#/components/schemas/TypeDTO'
+
+    TypeCreateResponse:
+      x-implements:
+        - dev.pollito.petclinic_java_gradle_react_tailwind_ts.util.metadata.ResponseMetadata
+      type: object
+      properties:
+        instance:
+          type: string
+        status:
+          type: integer
+        timestamp:
+          type: string
+          format: date-time
+        trace:
+          type: string
+        data:
+          type: integer
+
+    TypeUpdateResponse:
+      x-implements:
+        - dev.pollito.petclinic_java_gradle_react_tailwind_ts.util.metadata.ResponseMetadata
+      type: object
+      properties:
+        instance:
+          type: string
+        status:
+          type: integer
+        timestamp:
+          type: string
+          format: date-time
+        trace:
+          type: string
+        data:
+          type: integer
+
+    # ---------------------------------------------------------------------------
+    # Visit
+    # ---------------------------------------------------------------------------
+    VisitDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+        visitDate:
+          type: string
+          format: date
+        description:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        deletedAt:
+          type: string
+          format: date-time
+          nullable: true
+        pet:
+          type: integer
+      required:
+        - visitDate
+        - description
+        - createdAt
+        - updatedAt
+        - pet
+
+    VisitListData:
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/VisitDTO'
+
+    VisitListResponse:
+      x-implements:
+        - dev.pollito.petclinic_java_gradle_react_tailwind_ts.util.metadata.ResponseMetadata
+      type: object
+      properties:
+        instance:
+          type: string
+        status:
+          type: integer
+        timestamp:
+          type: string
+          format: date-time
+        trace:
+          type: string
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/VisitDTO'
+
+    VisitGetResponse:
+      x-implements:
+        - dev.pollito.petclinic_java_gradle_react_tailwind_ts.util.metadata.ResponseMetadata
+      type: object
+      properties:
+        instance:
+          type: string
+        status:
+          type: integer
+        timestamp:
+          type: string
+          format: date-time
+        trace:
+          type: string
+        data:
+          $ref: '#/components/schemas/VisitDTO'
+
+    VisitCreateResponse:
+      x-implements:
+        - dev.pollito.petclinic_java_gradle_react_tailwind_ts.util.metadata.ResponseMetadata
+      type: object
+      properties:
+        instance:
+          type: string
+        status:
+          type: integer
+        timestamp:
+          type: string
+          format: date-time
+        trace:
+          type: string
+        data:
+          type: integer
+
+    VisitUpdateResponse:
+      x-implements:
+        - dev.pollito.petclinic_java_gradle_react_tailwind_ts.util.metadata.ResponseMetadata
+      type: object
+      properties:
+        instance:
+          type: string
+        status:
+          type: integer
+        timestamp:
+          type: string
+          format: date-time
+        trace:
+          type: string
+        data:
+          type: integer
+
+    # ---------------------------------------------------------------------------
+    # Specialty
+    # ---------------------------------------------------------------------------
+    SpecialtyDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        deletedAt:
+          type: string
+          format: date-time
+          nullable: true
+      required:
+        - name
+        - createdAt
+        - updatedAt
+
+    SpecialtyListData:
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/SpecialtyDTO'
+
+    SpecialtyListResponse:
+      x-implements:
+        - dev.pollito.petclinic_java_gradle_react_tailwind_ts.util.metadata.ResponseMetadata
+      type: object
+      properties:
+        instance:
+          type: string
+        status:
+          type: integer
+        timestamp:
+          type: string
+          format: date-time
+        trace:
+          type: string
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/SpecialtyDTO'
+
+    SpecialtyGetResponse:
+      x-implements:
+        - dev.pollito.petclinic_java_gradle_react_tailwind_ts.util.metadata.ResponseMetadata
+      type: object
+      properties:
+        instance:
+          type: string
+        status:
+          type: integer
+        timestamp:
+          type: string
+          format: date-time
+        trace:
+          type: string
+        data:
+          $ref: '#/components/schemas/SpecialtyDTO'
+
+    SpecialtyCreateResponse:
+      x-implements:
+        - dev.pollito.petclinic_java_gradle_react_tailwind_ts.util.metadata.ResponseMetadata
+      type: object
+      properties:
+        instance:
+          type: string
+        status:
+          type: integer
+        timestamp:
+          type: string
+          format: date-time
+        trace:
+          type: string
+        data:
+          type: integer
+
+    SpecialtyUpdateResponse:
+      x-implements:
+        - dev.pollito.petclinic_java_gradle_react_tailwind_ts.util.metadata.ResponseMetadata
+      type: object
+      properties:
+        instance:
+          type: string
+        status:
+          type: integer
+        timestamp:
+          type: string
+          format: date-time
+        trace:
+          type: string
+        data:
+          type: integer
+
+    # ---------------------------------------------------------------------------
+    # Authentication
+    # ---------------------------------------------------------------------------
+    AuthenticationRequest:
+      type: object
+      properties:
+        username:
+          type: string
+          maxLength: 20
+        password:
+          type: string
+          maxLength: 72
+      required:
+        - username
+        - password
+
+    AuthenticationGetResponse:
+      x-implements:
+        - dev.pollito.petclinic_java_gradle_react_tailwind_ts.util.metadata.ResponseMetadata
+      type: object
+      properties:
+        instance:
+          type: string
+        status:
+          type: integer
+        timestamp:
+          type: string
+          format: date-time
+        trace:
+          type: string
+        data:
+          type: string

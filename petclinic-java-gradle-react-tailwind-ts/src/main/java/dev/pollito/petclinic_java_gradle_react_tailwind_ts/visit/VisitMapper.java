@@ -1,5 +1,6 @@
 package dev.pollito.petclinic_java_gradle_react_tailwind_ts.visit;
 
+import dev.pollito.petclinic_java_gradle_react_tailwind_ts.generated.model.VisitDTO;
 import dev.pollito.petclinic_java_gradle_react_tailwind_ts.pet.Pet;
 import dev.pollito.petclinic_java_gradle_react_tailwind_ts.pet.PetRepository;
 import dev.pollito.petclinic_java_gradle_react_tailwind_ts.util.NotFoundException;

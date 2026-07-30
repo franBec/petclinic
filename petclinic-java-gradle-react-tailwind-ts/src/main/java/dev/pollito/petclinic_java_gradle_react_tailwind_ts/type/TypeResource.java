@@ -1,59 +1,80 @@
 package dev.pollito.petclinic_java_gradle_react_tailwind_ts.type;
 
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import dev.pollito.petclinic_java_gradle_react_tailwind_ts.generated.api.TypeApi;
+import dev.pollito.petclinic_java_gradle_react_tailwind_ts.generated.model.TypeCreateResponse;
+import dev.pollito.petclinic_java_gradle_react_tailwind_ts.generated.model.TypeDTO;
+import dev.pollito.petclinic_java_gradle_react_tailwind_ts.generated.model.TypeGetResponse;
+import dev.pollito.petclinic_java_gradle_react_tailwind_ts.generated.model.TypeListResponse;
+import dev.pollito.petclinic_java_gradle_react_tailwind_ts.generated.model.TypeUpdateResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import java.util.List;
+import java.time.OffsetDateTime;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(value = "/api/types", produces = MediaType.APPLICATION_JSON_VALUE)
-public class TypeResource {
+public class TypeResource implements TypeApi {
 
     private final TypeService typeService;
+    private final HttpServletRequest request;
 
-    public TypeResource(final TypeService typeService) {
+    public TypeResource(final TypeService typeService, final HttpServletRequest request) {
         this.typeService = typeService;
+        this.request = request;
     }
 
-    @GetMapping
-    public ResponseEntity<List<TypeDTO>> getAllTypes() {
-        return ResponseEntity.ok(typeService.findAll());
+    @Override
+    public ResponseEntity<TypeListResponse> getAllTypes() {
+        return ResponseEntity.ok(
+                new TypeListResponse()
+                        .instance(request.getRequestURI())
+                        .status(HttpStatus.OK.value())
+                        .timestamp(OffsetDateTime.now())
+                        .trace("")
+                        .data(typeService.findAll()));
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<TypeDTO> getType(@PathVariable(name = "id") final Integer id) {
-        return ResponseEntity.ok(typeService.get(id));
+    @Override
+    public ResponseEntity<TypeGetResponse> getType(final Integer id) {
+        return ResponseEntity.ok(
+                new TypeGetResponse()
+                        .instance(request.getRequestURI())
+                        .status(HttpStatus.OK.value())
+                        .timestamp(OffsetDateTime.now())
+                        .trace("")
+                        .data(typeService.get(id)));
     }
 
-    @PostMapping
-    @ApiResponse(responseCode = "201")
-    public ResponseEntity<Integer> createType(@RequestBody @Valid final TypeDTO typeDTO) {
-        final Integer createdId = typeService.create(typeDTO);
-        return new ResponseEntity<>(createdId, HttpStatus.CREATED);
+    @Override
+    public ResponseEntity<TypeCreateResponse> createType(@Valid final TypeDTO typeDTO) {
+        Integer createdId = typeService.create(typeDTO);
+        return new ResponseEntity<>(
+                new TypeCreateResponse()
+                        .instance(request.getRequestURI())
+                        .status(HttpStatus.CREATED.value())
+                        .timestamp(OffsetDateTime.now())
+                        .trace("")
+                        .data(createdId),
+                HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Integer> updateType(@PathVariable(name = "id") final Integer id,
-            @RequestBody @Valid final TypeDTO typeDTO) {
+    @Override
+    public ResponseEntity<TypeUpdateResponse> updateType(
+            final Integer id, @Valid final TypeDTO typeDTO) {
         typeService.update(id, typeDTO);
-        return ResponseEntity.ok(id);
+        return ResponseEntity.ok(
+                new TypeUpdateResponse()
+                        .instance(request.getRequestURI())
+                        .status(HttpStatus.OK.value())
+                        .timestamp(OffsetDateTime.now())
+                        .trace("")
+                        .data(id));
     }
 
-    @DeleteMapping("/{id}")
-    @ApiResponse(responseCode = "204")
-    public ResponseEntity<Void> deleteType(@PathVariable(name = "id") final Integer id) {
+    @Override
+    public ResponseEntity<Void> deleteType(final Integer id) {
         typeService.delete(id);
         return ResponseEntity.noContent().build();
     }
-
 }

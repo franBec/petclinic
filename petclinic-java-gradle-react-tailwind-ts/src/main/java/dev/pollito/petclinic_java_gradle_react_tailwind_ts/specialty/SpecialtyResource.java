@@ -1,60 +1,82 @@
 package dev.pollito.petclinic_java_gradle_react_tailwind_ts.specialty;
 
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import dev.pollito.petclinic_java_gradle_react_tailwind_ts.generated.api.SpecialtyApi;
+import dev.pollito.petclinic_java_gradle_react_tailwind_ts.generated.model.SpecialtyCreateResponse;
+import dev.pollito.petclinic_java_gradle_react_tailwind_ts.generated.model.SpecialtyDTO;
+import dev.pollito.petclinic_java_gradle_react_tailwind_ts.generated.model.SpecialtyGetResponse;
+import dev.pollito.petclinic_java_gradle_react_tailwind_ts.generated.model.SpecialtyListResponse;
+import dev.pollito.petclinic_java_gradle_react_tailwind_ts.generated.model.SpecialtyUpdateResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import java.util.List;
+import java.time.OffsetDateTime;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(value = "/api/specialties", produces = MediaType.APPLICATION_JSON_VALUE)
-public class SpecialtyResource {
+public class SpecialtyResource implements SpecialtyApi {
 
     private final SpecialtyService specialtyService;
+    private final HttpServletRequest request;
 
-    public SpecialtyResource(final SpecialtyService specialtyService) {
+    public SpecialtyResource(
+            final SpecialtyService specialtyService, final HttpServletRequest request) {
         this.specialtyService = specialtyService;
+        this.request = request;
     }
 
-    @GetMapping
-    public ResponseEntity<List<SpecialtyDTO>> getAllSpecialties() {
-        return ResponseEntity.ok(specialtyService.findAll());
+    @Override
+    public ResponseEntity<SpecialtyListResponse> getAllSpecialties() {
+        return ResponseEntity.ok(
+                new SpecialtyListResponse()
+                        .instance(request.getRequestURI())
+                        .status(HttpStatus.OK.value())
+                        .timestamp(OffsetDateTime.now())
+                        .trace("")
+                        .data(specialtyService.findAll()));
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<SpecialtyDTO> getSpecialty(@PathVariable(name = "id") final Integer id) {
-        return ResponseEntity.ok(specialtyService.get(id));
+    @Override
+    public ResponseEntity<SpecialtyGetResponse> getSpecialty(final Integer id) {
+        return ResponseEntity.ok(
+                new SpecialtyGetResponse()
+                        .instance(request.getRequestURI())
+                        .status(HttpStatus.OK.value())
+                        .timestamp(OffsetDateTime.now())
+                        .trace("")
+                        .data(specialtyService.get(id)));
     }
 
-    @PostMapping
-    @ApiResponse(responseCode = "201")
-    public ResponseEntity<Integer> createSpecialty(
-            @RequestBody @Valid final SpecialtyDTO specialtyDTO) {
-        final Integer createdId = specialtyService.create(specialtyDTO);
-        return new ResponseEntity<>(createdId, HttpStatus.CREATED);
+    @Override
+    public ResponseEntity<SpecialtyCreateResponse> createSpecialty(
+            @Valid final SpecialtyDTO specialtyDTO) {
+        Integer createdId = specialtyService.create(specialtyDTO);
+        return new ResponseEntity<>(
+                new SpecialtyCreateResponse()
+                        .instance(request.getRequestURI())
+                        .status(HttpStatus.CREATED.value())
+                        .timestamp(OffsetDateTime.now())
+                        .trace("")
+                        .data(createdId),
+                HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Integer> updateSpecialty(@PathVariable(name = "id") final Integer id,
-            @RequestBody @Valid final SpecialtyDTO specialtyDTO) {
+    @Override
+    public ResponseEntity<SpecialtyUpdateResponse> updateSpecialty(
+            final Integer id, @Valid final SpecialtyDTO specialtyDTO) {
         specialtyService.update(id, specialtyDTO);
-        return ResponseEntity.ok(id);
+        return ResponseEntity.ok(
+                new SpecialtyUpdateResponse()
+                        .instance(request.getRequestURI())
+                        .status(HttpStatus.OK.value())
+                        .timestamp(OffsetDateTime.now())
+                        .trace("")
+                        .data(id));
     }
 
-    @DeleteMapping("/{id}")
-    @ApiResponse(responseCode = "204")
-    public ResponseEntity<Void> deleteSpecialty(@PathVariable(name = "id") final Integer id) {
+    @Override
+    public ResponseEntity<Void> deleteSpecialty(final Integer id) {
         specialtyService.delete(id);
         return ResponseEntity.noContent().build();
     }
-
 }

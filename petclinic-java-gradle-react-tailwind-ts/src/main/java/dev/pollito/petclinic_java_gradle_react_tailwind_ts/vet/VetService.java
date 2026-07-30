@@ -1,5 +1,6 @@
 package dev.pollito.petclinic_java_gradle_react_tailwind_ts.vet;
 
+import dev.pollito.petclinic_java_gradle_react_tailwind_ts.generated.model.VetDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

@@ -1,59 +1,80 @@
 package dev.pollito.petclinic_java_gradle_react_tailwind_ts.visit;
 
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import dev.pollito.petclinic_java_gradle_react_tailwind_ts.generated.api.VisitApi;
+import dev.pollito.petclinic_java_gradle_react_tailwind_ts.generated.model.VisitCreateResponse;
+import dev.pollito.petclinic_java_gradle_react_tailwind_ts.generated.model.VisitDTO;
+import dev.pollito.petclinic_java_gradle_react_tailwind_ts.generated.model.VisitGetResponse;
+import dev.pollito.petclinic_java_gradle_react_tailwind_ts.generated.model.VisitListResponse;
+import dev.pollito.petclinic_java_gradle_react_tailwind_ts.generated.model.VisitUpdateResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import java.util.List;
+import java.time.OffsetDateTime;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(value = "/api/visits", produces = MediaType.APPLICATION_JSON_VALUE)
-public class VisitResource {
+public class VisitResource implements VisitApi {
 
     private final VisitService visitService;
+    private final HttpServletRequest request;
 
-    public VisitResource(final VisitService visitService) {
+    public VisitResource(final VisitService visitService, final HttpServletRequest request) {
         this.visitService = visitService;
+        this.request = request;
     }
 
-    @GetMapping
-    public ResponseEntity<List<VisitDTO>> getAllVisits() {
-        return ResponseEntity.ok(visitService.findAll());
+    @Override
+    public ResponseEntity<VisitListResponse> getAllVisits() {
+        return ResponseEntity.ok(
+                new VisitListResponse()
+                        .instance(request.getRequestURI())
+                        .status(HttpStatus.OK.value())
+                        .timestamp(OffsetDateTime.now())
+                        .trace("")
+                        .data(visitService.findAll()));
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<VisitDTO> getVisit(@PathVariable(name = "id") final Integer id) {
-        return ResponseEntity.ok(visitService.get(id));
+    @Override
+    public ResponseEntity<VisitGetResponse> getVisit(final Integer id) {
+        return ResponseEntity.ok(
+                new VisitGetResponse()
+                        .instance(request.getRequestURI())
+                        .status(HttpStatus.OK.value())
+                        .timestamp(OffsetDateTime.now())
+                        .trace("")
+                        .data(visitService.get(id)));
     }
 
-    @PostMapping
-    @ApiResponse(responseCode = "201")
-    public ResponseEntity<Integer> createVisit(@RequestBody @Valid final VisitDTO visitDTO) {
-        final Integer createdId = visitService.create(visitDTO);
-        return new ResponseEntity<>(createdId, HttpStatus.CREATED);
+    @Override
+    public ResponseEntity<VisitCreateResponse> createVisit(@Valid final VisitDTO visitDTO) {
+        Integer createdId = visitService.create(visitDTO);
+        return new ResponseEntity<>(
+                new VisitCreateResponse()
+                        .instance(request.getRequestURI())
+                        .status(HttpStatus.CREATED.value())
+                        .timestamp(OffsetDateTime.now())
+                        .trace("")
+                        .data(createdId),
+                HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Integer> updateVisit(@PathVariable(name = "id") final Integer id,
-            @RequestBody @Valid final VisitDTO visitDTO) {
+    @Override
+    public ResponseEntity<VisitUpdateResponse> updateVisit(
+            final Integer id, @Valid final VisitDTO visitDTO) {
         visitService.update(id, visitDTO);
-        return ResponseEntity.ok(id);
+        return ResponseEntity.ok(
+                new VisitUpdateResponse()
+                        .instance(request.getRequestURI())
+                        .status(HttpStatus.OK.value())
+                        .timestamp(OffsetDateTime.now())
+                        .trace("")
+                        .data(id));
     }
 
-    @DeleteMapping("/{id}")
-    @ApiResponse(responseCode = "204")
-    public ResponseEntity<Void> deleteVisit(@PathVariable(name = "id") final Integer id) {
+    @Override
+    public ResponseEntity<Void> deleteVisit(final Integer id) {
         visitService.delete(id);
         return ResponseEntity.noContent().build();
     }
-
 }

@@ -1,6 +1,7 @@
 package dev.pollito.petclinic_java_gradle_react_tailwind_ts.owner;
 
 import dev.pollito.petclinic_java_gradle_react_tailwind_ts.events.BeforeDeleteOwner;
+import dev.pollito.petclinic_java_gradle_react_tailwind_ts.generated.model.OwnerDTO;
 import dev.pollito.petclinic_java_gradle_react_tailwind_ts.util.CustomCollectors;
 import dev.pollito.petclinic_java_gradle_react_tailwind_ts.util.NotFoundException;
 import java.util.Map;

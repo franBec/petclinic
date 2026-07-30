@@ -3,6 +3,7 @@ package dev.pollito.petclinic_java_gradle_react_tailwind_ts.pet;
 import dev.pollito.petclinic_java_gradle_react_tailwind_ts.events.BeforeDeleteOwner;
 import dev.pollito.petclinic_java_gradle_react_tailwind_ts.events.BeforeDeletePet;
 import dev.pollito.petclinic_java_gradle_react_tailwind_ts.events.BeforeDeleteType;
+import dev.pollito.petclinic_java_gradle_react_tailwind_ts.generated.model.PetDTO;
 import dev.pollito.petclinic_java_gradle_react_tailwind_ts.owner.OwnerRepository;
 import dev.pollito.petclinic_java_gradle_react_tailwind_ts.type.TypeRepository;
 import dev.pollito.petclinic_java_gradle_react_tailwind_ts.util.CustomCollectors;

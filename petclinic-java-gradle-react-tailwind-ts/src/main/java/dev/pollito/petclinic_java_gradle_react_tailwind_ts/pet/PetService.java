@@ -1,5 +1,6 @@
 package dev.pollito.petclinic_java_gradle_react_tailwind_ts.pet;
 
+import dev.pollito.petclinic_java_gradle_react_tailwind_ts.generated.model.PetDTO;
 import java.util.List;
 import java.util.Map;
 

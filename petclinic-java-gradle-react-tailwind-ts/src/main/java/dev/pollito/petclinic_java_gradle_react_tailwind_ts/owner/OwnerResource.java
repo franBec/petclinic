@@ -1,74 +1,93 @@
 package dev.pollito.petclinic_java_gradle_react_tailwind_ts.owner;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.enums.ParameterIn;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import dev.pollito.petclinic_java_gradle_react_tailwind_ts.generated.api.OwnerApi;
+import dev.pollito.petclinic_java_gradle_react_tailwind_ts.generated.model.OwnerCreateResponse;
+import dev.pollito.petclinic_java_gradle_react_tailwind_ts.generated.model.OwnerDTO;
+import dev.pollito.petclinic_java_gradle_react_tailwind_ts.generated.model.OwnerGetResponse;
+import dev.pollito.petclinic_java_gradle_react_tailwind_ts.generated.model.OwnerListData;
+import dev.pollito.petclinic_java_gradle_react_tailwind_ts.generated.model.OwnerListResponse;
+import dev.pollito.petclinic_java_gradle_react_tailwind_ts.generated.model.OwnerUpdateResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import java.time.OffsetDateTime;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.SortDefault;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(value = "/api/owners", produces = MediaType.APPLICATION_JSON_VALUE)
-public class OwnerResource {
+public class OwnerResource implements OwnerApi {
 
     private final OwnerService ownerService;
+    private final HttpServletRequest request;
 
-    public OwnerResource(final OwnerService ownerService) {
+    public OwnerResource(final OwnerService ownerService, final HttpServletRequest request) {
         this.ownerService = ownerService;
+        this.request = request;
     }
 
-    @Operation(parameters = {
-            @Parameter(name = "page", in = ParameterIn.QUERY, schema = @Schema(implementation = Integer.class)),
-            @Parameter(name = "size", in = ParameterIn.QUERY, schema = @Schema(implementation = Integer.class)),
-            @Parameter(name = "sort", in = ParameterIn.QUERY, schema = @Schema(implementation = String.class))
-    })
-    @GetMapping
-    public ResponseEntity<Page<OwnerDTO>> getAllOwners(
-            @RequestParam(name = "filter", required = false) final String filter,
-            @Parameter(hidden = true) @SortDefault(sort = "id") @PageableDefault(size = 20) final Pageable pageable) {
-        return ResponseEntity.ok(ownerService.findAll(filter, pageable));
+    @Override
+    public ResponseEntity<OwnerListResponse> getAllOwners(
+            final String filter,
+            @SortDefault(sort = "id") @PageableDefault(size = 20) final Pageable pageable) {
+        Page<OwnerDTO> page = ownerService.findAll(filter, pageable);
+        return ResponseEntity.ok(
+                new OwnerListResponse()
+                        .instance(request.getRequestURI())
+                        .status(HttpStatus.OK.value())
+                        .timestamp(OffsetDateTime.now())
+                        .trace("")
+                        .data(new OwnerListData()
+                                .content(page.getContent())
+                                .page(page.getNumber())
+                                .size(page.getSize())
+                                .totalElements(page.getTotalElements())
+                                .totalPages(page.getTotalPages())));
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<OwnerDTO> getOwner(@PathVariable(name = "id") final Integer id) {
-        return ResponseEntity.ok(ownerService.get(id));
+    @Override
+    public ResponseEntity<OwnerGetResponse> getOwner(final Integer id) {
+        return ResponseEntity.ok(
+                new OwnerGetResponse()
+                        .instance(request.getRequestURI())
+                        .status(HttpStatus.OK.value())
+                        .timestamp(OffsetDateTime.now())
+                        .trace("")
+                        .data(ownerService.get(id)));
     }
 
-    @PostMapping
-    @ApiResponse(responseCode = "201")
-    public ResponseEntity<Integer> createOwner(@RequestBody @Valid final OwnerDTO ownerDTO) {
-        final Integer createdId = ownerService.create(ownerDTO);
-        return new ResponseEntity<>(createdId, HttpStatus.CREATED);
+    @Override
+    public ResponseEntity<OwnerCreateResponse> createOwner(@Valid final OwnerDTO ownerDTO) {
+        Integer createdId = ownerService.create(ownerDTO);
+        return new ResponseEntity<>(
+                new OwnerCreateResponse()
+                        .instance(request.getRequestURI())
+                        .status(HttpStatus.CREATED.value())
+                        .timestamp(OffsetDateTime.now())
+                        .trace("")
+                        .data(createdId),
+                HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Integer> updateOwner(@PathVariable(name = "id") final Integer id,
-            @RequestBody @Valid final OwnerDTO ownerDTO) {
+    @Override
+    public ResponseEntity<OwnerUpdateResponse> updateOwner(
+            final Integer id, @Valid final OwnerDTO ownerDTO) {
         ownerService.update(id, ownerDTO);
-        return ResponseEntity.ok(id);
+        return ResponseEntity.ok(
+                new OwnerUpdateResponse()
+                        .instance(request.getRequestURI())
+                        .status(HttpStatus.OK.value())
+                        .timestamp(OffsetDateTime.now())
+                        .trace("")
+                        .data(id));
     }
 
-    @DeleteMapping("/{id}")
-    @ApiResponse(responseCode = "204")
-    public ResponseEntity<Void> deleteOwner(@PathVariable(name = "id") final Integer id) {
+    @Override
+    public ResponseEntity<Void> deleteOwner(final Integer id) {
         ownerService.delete(id);
         return ResponseEntity.noContent().build();
     }
-
 }

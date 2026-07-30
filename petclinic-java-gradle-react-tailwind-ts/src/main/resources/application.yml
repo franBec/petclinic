@@ -36,5 +36,8 @@ management:
   endpoint:
     health:
       show-details: always
+openapi:
+  petclinic:
+    base-path: ""
 springdoc:
   pathsToMatch: /api/**, /authenticate

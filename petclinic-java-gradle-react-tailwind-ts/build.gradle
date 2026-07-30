@@ -4,11 +4,45 @@ plugins {
     id 'java'
     id 'com.github.node-gradle.node' version '7.1.0'
     id 'com.diffplug.spotless' version '7.0.2'
+    id 'org.openapi.generator' version '7.20.0'
+}
+
+sourceSets {
+    main {
+        java {
+            srcDir(layout.buildDirectory.dir("generated/sources/openapi/src/main/java"))
+        }
+    }
+}
+
+openApiGenerate {
+    generatorName = "spring"
+    inputSpec = layout.projectDirectory.file("src/main/resources/openapi.yaml").asFile.toString()
+    outputDir = layout.buildDirectory.dir("generated/sources/openapi").get().asFile.toString()
+    def basePackage = "dev.pollito.petclinic_java_gradle_react_tailwind_ts.generated".toString()
+    apiPackage = "${basePackage}.api"
+    modelPackage = "${basePackage}.model"
+    configOptions = [
+        interfaceOnly        : "true",
+        requestMappingMode   : "api_interface",
+        skipDefaultInterface : "true",
+        useJakartaEe         : "true",
+        useSpringBoot3       : "true",
+        useTags              : "true",
+        openApiNullable      : "false",
+        useBeanValidation    : "true",
+        performBeanValidation: "true",
+    ]
+}
+
+tasks.named('compileJava') {
+    dependsOn tasks.named('openApiGenerate')
 }
 
 spotless {
     java {
         eclipse().configFile('eclipse-formatter.xml')
+        targetExclude 'build/generated/**'
     }
 }
 

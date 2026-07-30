@@ -1,59 +1,79 @@
 package dev.pollito.petclinic_java_gradle_react_tailwind_ts.pet;
 
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import dev.pollito.petclinic_java_gradle_react_tailwind_ts.generated.api.PetApi;
+import dev.pollito.petclinic_java_gradle_react_tailwind_ts.generated.model.PetCreateResponse;
+import dev.pollito.petclinic_java_gradle_react_tailwind_ts.generated.model.PetDTO;
+import dev.pollito.petclinic_java_gradle_react_tailwind_ts.generated.model.PetGetResponse;
+import dev.pollito.petclinic_java_gradle_react_tailwind_ts.generated.model.PetListResponse;
+import dev.pollito.petclinic_java_gradle_react_tailwind_ts.generated.model.PetUpdateResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import java.util.List;
+import java.time.OffsetDateTime;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(value = "/api/pets", produces = MediaType.APPLICATION_JSON_VALUE)
-public class PetResource {
+public class PetResource implements PetApi {
 
     private final PetService petService;
+    private final HttpServletRequest request;
 
-    public PetResource(final PetService petService) {
+    public PetResource(final PetService petService, final HttpServletRequest request) {
         this.petService = petService;
+        this.request = request;
     }
 
-    @GetMapping
-    public ResponseEntity<List<PetDTO>> getAllPets() {
-        return ResponseEntity.ok(petService.findAll());
+    @Override
+    public ResponseEntity<PetListResponse> getAllPets() {
+        return ResponseEntity.ok(
+                new PetListResponse()
+                        .instance(request.getRequestURI())
+                        .status(HttpStatus.OK.value())
+                        .timestamp(OffsetDateTime.now())
+                        .trace("")
+                        .data(petService.findAll()));
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<PetDTO> getPet(@PathVariable(name = "id") final Integer id) {
-        return ResponseEntity.ok(petService.get(id));
+    @Override
+    public ResponseEntity<PetGetResponse> getPet(final Integer id) {
+        return ResponseEntity.ok(
+                new PetGetResponse()
+                        .instance(request.getRequestURI())
+                        .status(HttpStatus.OK.value())
+                        .timestamp(OffsetDateTime.now())
+                        .trace("")
+                        .data(petService.get(id)));
     }
 
-    @PostMapping
-    @ApiResponse(responseCode = "201")
-    public ResponseEntity<Integer> createPet(@RequestBody @Valid final PetDTO petDTO) {
-        final Integer createdId = petService.create(petDTO);
-        return new ResponseEntity<>(createdId, HttpStatus.CREATED);
+    @Override
+    public ResponseEntity<PetCreateResponse> createPet(@Valid final PetDTO petDTO) {
+        return new ResponseEntity<>(
+                new PetCreateResponse()
+                        .instance(request.getRequestURI())
+                        .status(HttpStatus.CREATED.value())
+                        .timestamp(OffsetDateTime.now())
+                        .trace("")
+                        .data(petService.create(petDTO)),
+                HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Integer> updatePet(@PathVariable(name = "id") final Integer id,
-            @RequestBody @Valid final PetDTO petDTO) {
+    @Override
+    public ResponseEntity<PetUpdateResponse> updatePet(
+            final Integer id, @Valid final PetDTO petDTO) {
         petService.update(id, petDTO);
-        return ResponseEntity.ok(id);
+        return ResponseEntity.ok(
+                new PetUpdateResponse()
+                        .instance(request.getRequestURI())
+                        .status(HttpStatus.OK.value())
+                        .timestamp(OffsetDateTime.now())
+                        .trace("")
+                        .data(id));
     }
 
-    @DeleteMapping("/{id}")
-    @ApiResponse(responseCode = "204")
-    public ResponseEntity<Void> deletePet(@PathVariable(name = "id") final Integer id) {
+    @Override
+    public ResponseEntity<Void> deletePet(final Integer id) {
         petService.delete(id);
         return ResponseEntity.noContent().build();
     }
-
 }
