@@ -4,20 +4,18 @@ This repository implements the classic [Spring Petclinic](https://github.com/spr
 
 ## Quick Start
 
+```sh
+docker compose up -d --build
+```
+
+This starts PostgreSQL, runs Flyway migrations (creating tables and seeding data), and launches pgAdmin.
+
+
 | Service    | Image                         | Port  | Purpose                             |
 |------------|-------------------------------|-------|-------------------------------------|
 | `postgres` | `postgres:18-alpine`          | 5432  | Database server                     |
 | `flyway`   | `flyway/flyway:10-alpine`     | —     | Schema migrations and seed data     |
 | `pgadmin`  | `dpage/pgadmin4:latest`       | 5050  | Web-based database admin UI         |
-
-- **Database name:** `petclinic`
-- **Credentials:** `petclinic` / `petclinic`
-
-```bash
-docker compose up -d --build
-```
-
-This starts PostgreSQL, runs Flyway migrations (creating tables and seeding data), and launches pgAdmin.
 
 ### Access pgAdmin
 
@@ -144,7 +142,7 @@ erDiagram
 
     users {
         varchar username PK
-        varchar68 password
+        varchar(68) password
         boolean enabled
         int owner_id FK "nullable"
         timestamp created_at

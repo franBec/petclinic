@@ -8,4 +8,4 @@
 
 ## Project Overview
 
-This is the `petclinic`. It contains a shared PostgreSQL database foundation for the Petclinic domain, Dockerized with official `postgres:18-alpine` and managed via Flyway migrations. The `docker-compose.yml` provides `postgres`, `flyway`, and `pgadmin` services. Sibling repos (e.g., `petclinic-java`, `petclinic-kotlin`, `petclinic-scala`) are expected to consume this database as their persistence layer.
+This is the `petclinic`. It contains a shared PostgreSQL database foundation for the Petclinic domain, Dockerized with official `postgres:18-alpine` and managed via Flyway migrations. The `docker-compose.yml` provides `postgres`, `flyway`, and `pgadmin` services. Sibling repos (e.g., `petclinic-*`) are expected to consume this database as their persistence layer.
