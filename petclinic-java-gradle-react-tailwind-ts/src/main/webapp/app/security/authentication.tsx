@@ -4,8 +4,8 @@ import { useNavigate } from 'react-router';
 import { handleServerError, setYupDefaults } from 'app/common/utils';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { AuthenticationRequest } from 'app/security/authentication-model';
-import axios from 'axios';
+import { useAuthenticate, unwrap } from 'app/api';
+import type { AuthenticationRequest } from 'app/api';
 import useAuthentication from 'app/security/use-authentication';
 import InputRow from 'app/common/input-row/input-row';
 import useDocumentTitle from 'app/common/use-document-title';
@@ -25,6 +25,7 @@ export default function Authentication() {
 
   const navigate = useNavigate();
   const authenticationContext = useAuthentication();
+  const authenticateMutation = useAuthenticate();
 
   const useFormResult = useForm({
     resolver: yupResolver(getSchema()),
@@ -33,10 +34,11 @@ export default function Authentication() {
   const login = async (data: AuthenticationRequest) => {
     window.scrollTo(0, 0);
     try {
-      const response = await axios.post('/authenticate', data);
-      navigate(authenticationContext.login(response.data));
+      const response = await authenticateMutation.mutateAsync({ data });
+      const jwt = unwrap<{ data: string }>(response).data;
+      navigate(authenticationContext.login(jwt));
     } catch (error: any) {
-      if (error.status === 401) {
+      if (error?.response?.status === 401 || error?.status === 401) {
         useFormResult.reset();
         navigate('/login', {
           state: {

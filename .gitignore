@@ -2,3 +2,4 @@
 .gradle/
 package-lock.json
 *.hprof
+**/__generated__/

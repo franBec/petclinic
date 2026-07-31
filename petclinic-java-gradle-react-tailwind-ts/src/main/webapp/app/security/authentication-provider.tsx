@@ -1,13 +1,15 @@
 import React, { createContext, useEffect, useState, ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMatches, useNavigate } from 'react-router';
-import { AuthenticationResponse } from 'app/security/authentication-model';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import axios from 'axios';
+
+const queryClient = new QueryClient();
 
 export const AuthenticationContext = createContext<{
   isLoggedIn: () => boolean;
   getToken: () => string | null;
-  login: (authenticationResponse: AuthenticationResponse) => string;
+  login: (accessToken: string) => string;
   logout: () => void;
 }>({
   isLoggedIn: () => false,
@@ -16,14 +18,10 @@ export const AuthenticationContext = createContext<{
   logout: () => {},
 });
 
-/**
- * Central management of authentication. Checks the availability of a required role before loading a route.
- * Adds the current token to outgoing HTTP requests.
- */
 export const AuthenticationProvider = ({ children }: AuthenticationProviderParams) => {
   const { t } = useTranslation();
   const [initCompleted, setInitCompleted] = useState(false);
-  const [token, setToken] = useState(localStorage.getItem('access_token'));
+  const [, setRenderTrigger] = useState(0);
   const [loginSuccessUrl, setLoginSuccessUrl] = useState('/');
   const navigate = useNavigate();
   const matches = useMatches();
@@ -32,25 +30,17 @@ export const AuthenticationProvider = ({ children }: AuthenticationProviderParam
   }, []);
 
   const getToken = () => {
-    // synchronize with potential other tabs
-    if (localStorage.getItem('access_token') !== token) {
-      setToken(localStorage.getItem('access_token'));
-    }
-    return token;
+    return localStorage.getItem('access_token');
   };
 
   const isLoggedIn = () => {
-    // check token available
-    if (getToken() === null) {
-      return false;
-    }
-    // check token not expired
-    return getCurrentSeconds() < getTokenData().exp;
+    const tokenData = getTokenData();
+    return tokenData !== null && getCurrentSeconds() < tokenData.exp;
   };
 
-  const login = (authenticationResponse: AuthenticationResponse) => {
-    localStorage.setItem('access_token', authenticationResponse.accessToken!);
-    setToken(authenticationResponse.accessToken!);
+  const login = (accessToken: string) => {
+    localStorage.setItem('access_token', accessToken);
+    setRenderTrigger((n) => n + 1);
     const navigateTo = loginSuccessUrl;
     setLoginSuccessUrl('/');
     return navigateTo;
@@ -61,7 +51,7 @@ export const AuthenticationProvider = ({ children }: AuthenticationProviderParam
       setLoginSuccessUrl('/');
     }
     localStorage.removeItem('access_token');
-    setToken(null);
+    setRenderTrigger((n) => n + 1);
     navigate('/login', {
       state: {
         msgInfo: t('authentication.logout.success'),
@@ -71,16 +61,32 @@ export const AuthenticationProvider = ({ children }: AuthenticationProviderParam
 
   const hasAnyRole = () => {
     const tokenData = getTokenData();
+    if (!tokenData) return false;
     return roles.some((requiredRole) => tokenData.roles.includes(requiredRole));
   };
 
   const getTokenData = () => {
-    return JSON.parse(atob(getToken()!.split('.')[1]!));
+    const token = getToken();
+    if (!token) return null;
+    const parts = token.split('.');
+    if (parts.length !== 3) return null;
+    try {
+      const payload = parts[1]!;
+      const base64 = payload.replace(/-/g, '+').replace(/_/g, '/');
+      return JSON.parse(atob(base64));
+    } catch {
+      return null;
+    }
   };
 
   const getCurrentSeconds = () => {
     return Math.floor(new Date().getTime() / 1000);
   };
+
+  // clean up any stale token on startup
+  if (getTokenData() === null && localStorage.getItem('access_token')) {
+    localStorage.removeItem('access_token');
+  }
 
   useEffect(() => {
     // include token in outgoing requests
@@ -137,7 +143,7 @@ export const AuthenticationProvider = ({ children }: AuthenticationProviderParam
   }
   return (
     <AuthenticationContext.Provider value={{ isLoggedIn, getToken, login, logout }}>
-      {initCompleted && children}
+      {initCompleted && <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>}
     </AuthenticationContext.Provider>
   );
 };
